@@ -20,8 +20,8 @@
     "type": "git",
     "url": "git+https://github.com/cuiyanx/WMLP.git"
   },
-  "author": "cuiyan",
-  "license": "ISC",
+  "author": "yanx.cui@intel.com",
+  "license": "Apache 2.0",
   "bugs": {
     "url": "https://github.com/cuiyanx/WMLP/issues"
   },
