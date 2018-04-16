@@ -3,25 +3,23 @@
 const {Builder, By, Key, until} = require("../node_modules/selenium-webdriver");
 const chrome = require("../node_modules/selenium-webdriver/chrome");
 
+var countPasses = 0;
+var countFailures = 0;
+var csvTitle = null;
+var csvModule = null;
+var csvName = null;
+var csvPass = null;
+var csvFail = null;
+var csvExecution = "auto";
+var csvSuite = "tests";
+
 class GraspingWebInfo {
 
     constructor(){
-        this.RemoteURL = "http://127.0.0.1:8080";
+        this.RemoteURL = "http://127.0.0.1:8080/test/";
         this.WaitTime = 10000;
-        this.Driver = new Builder()
-            .forBrowser("chrome")
-            .setChromeOptions(new chrome.Options())
-            .build();
+        this.Driver = null;
         this.CSVFile = null;
-        this.countPasses = 0;
-        this.countFailures = 0;
-        this.csvTitle = null;
-        this.csvModule = null;
-        this.csvName = null;
-        this.csvPass = null;
-        this.csvFail = null;
-        this.csvExecution = "auto";
-        this.csvSuite = "tests";
     }
 
     async init(Driver, CSVFile, RemoteURL, WaitTime) {
@@ -81,41 +79,41 @@ class GraspingWebInfo {
         for (let i = 1; i <= array.length; i++) {
             await this.getTestCaseName(array[i - 1])
                 .then(function(message) {
-                this.csvName = message;
+                csvName = message;
                 console.log("       " + i + ") " + message);
             });
 
             await this.getTestCaseError(array[i - 1])
                 .then(function(message) {
-                this.csvPass = null;
-                this.csvFail = "1";
-                this.countFailures++;
+                csvPass = null;
+                csvFail = "1";
+                countFailures++;
                 console.log("           Test failed!");
             }).catch(function(error) {
-                this.csvPass = "1";
-                this.csvFail = null;
-                this.countPasses++;
+                csvPass = "1";
+                csvFail = null;
+                countPasses++;
                 console.log("           Test passed!");
             });
 
-            if (this.csvModule == null) {
-                this.csvModule = this.csvTitle;
+            if (csvModule == null) {
+                csvModule = csvTitle;
             }
 
             let DataFormat = {
-                Feature: this.csvTitle,
-                CaseId: this.csvModule + "/" + i,
-                TestCase: this.csvName,
-                Pass : this.csvPass,
-                Fail: this.csvFail,
-                ExecutionType: this.csvExecution,
-                SuiteName: this.csvSuite
+                Feature: csvTitle,
+                CaseId: csvModule + "/" + i,
+                TestCase: csvName,
+                Pass : csvPass,
+                Fail: csvFail,
+                ExecutionType: csvExecution,
+                SuiteName: csvSuite
             };
             await this.CSVFile.WriteData(DataFormat);
 
-            this.csvName = null;
-            this.csvPass = null;
-            this.csvFail = null;
+            csvName = null;
+            csvPass = null;
+            csvFail = null;
         }
     }
 
@@ -126,7 +124,7 @@ class GraspingWebInfo {
             .then(function(message) {
             let getPasses = message;
             console.log("    Web passes: " + getPasses);
-            console.log("  Check passes: " + this.countPasses);
+            console.log("  Check passes: " + countPasses);
         })
             .catch(function(reason) {
             console.log("ERROR: " + reason);
@@ -136,7 +134,7 @@ class GraspingWebInfo {
             .then(function(message) {
             let getFailures = message;
             console.log("  Web failures: " + getFailures);
-            console.log("Check failures: " + this.countFailures);
+            console.log("Check failures: " + countFailures);
         })
             .catch(function(reason) {
             console.log("ERROR: " + reason);
@@ -154,7 +152,7 @@ class GraspingWebInfo {
         console.log("---------------------------------------------------");
     }
 
-    async WebInfo() {
+    async Grasp() {
         try {
             await this.Driver.get(this.RemoteURL);
             await this.Driver.sleep(this.WaitTime);
@@ -164,9 +162,9 @@ class GraspingWebInfo {
             for (let i = 1; i <= arrayTitles.length; i++) {
                 await arrayTitles[i - 1].findElement(By.xpath("./h1/a")).getText()
                     .then(function(message) {
-                    this.csvTitle = message;
-                    this.csvModule = null;
-                    console.log(i + ": " + this.csvTitle);
+                    csvTitle = message;
+                    csvModule = null;
+                    console.log(i + ": " + csvTitle);
                 });
 
                 let arrayModule = await arrayTitles[i - 1].findElements(By.xpath("./ul/li[@class='suite']"));
@@ -174,8 +172,8 @@ class GraspingWebInfo {
                     await arrayModule[j - 1].findElement(By.xpath("./h1/a")).getText()
                         .then(function(message) {
                         let array = message.split("#");
-                        this.csvModule = array[1];
-                        console.log("    #" + j + ": " + this.csvModule);
+                        csvModule = array[1];
+                        console.log("    #" + j + ": " + csvModule);
                     });
 
                     await this.getTestCaseInfo(arrayModule[j - 1]);
