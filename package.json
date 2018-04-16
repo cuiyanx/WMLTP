@@ -1,0 +1,29 @@
+{
+  "name": "wmlp",
+  "version": "0.1.0",
+  "description": "test tool for webml-polyfill",
+  "main": "./test/test-main.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "fast-csv": "^2.4.1",
+    "selenium-webdriver": "^4.0.0-alpha.1"
+  },
+  "scripts": {
+    "start": "npm run test",
+    "test": "node ./test/test-main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cuiyanx/WMLP.git"
+  },
+  "author": "cuiyan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cuiyanx/WMLP/issues"
+  },
+  "homepage": "https://github.com/cuiyanx/WMLP#readme"
+}
