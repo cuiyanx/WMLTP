@@ -8,16 +8,18 @@ const Web = require("../lib/graspingwebinfo").GraspingWebInfo;
         .then(function() {
         console.log("Open csv file success!");
     })
-        .catch(function() {
+        .catch(function(e) {
         console.log("Open csv file fail!");
+        console.log(e);
     });
 
-    let driver = "ubuntu";
-    //let driver = "android";
+    let platforms = "ubuntu";
+    //let platforms = "android";
     let RemoteURL = "http://127.0.0.1:8080/test/";
     //let RemoteURL = "http://brucedai.github.io/nt/test/index-local.html";
     let WaitTime = 10000;
-    await Web.init(driver, csv, RemoteURL, WaitTime);
+    await Web.setChromePath("/usr/bin/chromium-browser-unstable");
+    await Web.init(platforms, csv, RemoteURL, WaitTime);
     await Web.Grasp();
 
     await csv.Close()
@@ -27,4 +29,6 @@ const Web = require("../lib/graspingwebinfo").GraspingWebInfo;
         .catch(function() {
         console.log("Close csv file fail!");
     });
+
+    await Web.Close();
 })().then(_ => console.log("Test complete!"), err => console.log("ERROR: " + err));
