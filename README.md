@@ -4,7 +4,7 @@ The WMLP is a test tool for [webml-polyfill](https://github.com/intel/webml-poly
 
 ## Prerequisites
 * Run WMLP with Google Chrome, need [chromedriver](http://chromedriver.storage.googleapis.com/index.html).
-* If run WMLP on andriod device, need adb server.
+* If run WMLP on android device, need adb server.
 
 ## Install
 

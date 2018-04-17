@@ -13,7 +13,7 @@ const Web = require("../lib/graspingwebinfo").GraspingWebInfo;
     });
 
     let driver = "ubuntu";
-    //let driver = "andriod";
+    //let driver = "android";
     let RemoteURL = "http://127.0.0.1:8080/test/";
     //let RemoteURL = "http://brucedai.github.io/nt/test/index-local.html";
     let WaitTime = 10000;
