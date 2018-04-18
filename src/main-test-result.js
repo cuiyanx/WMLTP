@@ -8,19 +8,19 @@ const Web = require("../lib/graspingwebinfo").GraspingWebInfo;
         .then(function() {
         console.log("Open csv file success!");
     })
-        .catch(function(e) {
+        .catch(function() {
         console.log("Open csv file fail!");
-        console.log(e);
     });
 
     let platforms = "ubuntu";
-    //let platforms = "android";
-    let RemoteURL = "http://127.0.0.1:8080/test/";
-    //let RemoteURL = "http://brucedai.github.io/nt/test/index-local.html";
-    let WaitTime = 10000;
+    let RemoteURL = "http://brucedai.github.io/nt/test/index-local.html";
     await Web.setChromePath("/usr/bin/chromium-browser-unstable");
-    await Web.init(platforms, csv, RemoteURL, WaitTime);
-    await Web.Grasp();
+    await Web.setRemoteURL(RemoteURL);
+    await Web.setCSVFile(csv);
+    await Web.setPlatforms(platforms);
+    await Web.setWebMLSwitch(false);
+    await Web.CreateDriver();
+    await Web.GraspTestResult();
 
     await csv.Close()
         .then(function() {

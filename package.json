@@ -13,8 +13,8 @@
     "selenium-webdriver": "^4.0.0-alpha.1"
   },
   "scripts": {
-    "start": "npm run test",
-    "test": "node ./test/test-main.js"
+    "start": "npm run testresult",
+    "testresult": "node ./src/main-test-result.js"
   },
   "repository": {
     "type": "git",

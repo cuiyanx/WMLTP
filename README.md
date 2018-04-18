@@ -21,8 +21,8 @@ $ npm install
 $ npm start
 ```
 
-or
+## Geting test result
 
 ```sh
-$ npm run test
+$ npm run testresult
 ```
