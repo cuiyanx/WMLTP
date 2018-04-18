@@ -7,7 +7,7 @@ The WMLP is a test tool for [webml-polyfill](https://github.com/intel/webml-poly
 ```sh
     chromedriver(2.37)  -->  google-chrome(65.x.xxx)
 ```
-* If run WMLP on android device, need adb server.
+* If run WMLP on android device(>= 8.0), need adb server.
 
 ## Install
 
@@ -16,13 +16,14 @@ $ npm install
 ```
 
 ## Start
-
-```sh
-$ npm start
-```
-
-## Geting test result
+### Grasping test result
 
 ```sh
 $ npm run testresult
+```
+
+### Getting newest commit
+
+```sh
+$ npm run commit
 ```

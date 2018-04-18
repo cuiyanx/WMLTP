@@ -4,7 +4,8 @@ const csv = require("../lib/saving-csv-file").SavingCSVFile;
 const Web = require("../lib/grasping-web-info").GraspingWebInfo;
 
 (async function() {
-    await csv.Open("ubuntu")
+    await csv.setPlatform("ubuntu");
+    await csv.Open()
         .then(function() {
         console.log("Open csv file success!");
     })
@@ -12,15 +13,21 @@ const Web = require("../lib/grasping-web-info").GraspingWebInfo;
         console.log("Open csv file fail!");
     });
 
-    let platforms = "ubuntu";
-    let RemoteURL = "http://brucedai.github.io/nt/test/index-local.html";
     await Web.setChromePath("/usr/bin/chromium-browser-unstable");
-    await Web.setRemoteURL(RemoteURL);
     await Web.setCSVFile(csv);
-    await Web.setPlatforms(platforms);
+    await Web.setPlatforms("ubuntu");
     await Web.setWebMLSwitch(false);
     await Web.CreateDriver();
-    await Web.GraspTestResult();
+    await Web.Open("http://brucedai.github.io/nt/test/index-local.html");
+    await Web.GraspTestResult()
+        .then(function() {
+        console.log("Grasp test result success!");
+    })
+        .catch(function(e) {
+        console.log("Grasp test result fail!");
+        throw e;
+    });
+    await Web.Close();
 
     await csv.Close()
         .then(function() {
@@ -29,6 +36,4 @@ const Web = require("../lib/grasping-web-info").GraspingWebInfo;
         .catch(function() {
         console.log("Close csv file fail!");
     });
-
-    await Web.Close();
-})().then(_ => console.log("Test complete!"), err => console.log("ERROR: " + err));
+})().then(_ => console.log("Grasping test result is completed!"), err => console.log("ERROR: " + err));
