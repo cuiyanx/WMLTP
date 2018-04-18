@@ -1,6 +1,6 @@
 console.log("Test APIs for saving csv file...");
 
-const csv = require("../lib/savingcsvfile").SavingCSVFile;
+const csv = require("../lib/saving-csv-file").SavingCSVFile;
 
 (async function() {
     await csv.Open("ubuntu")

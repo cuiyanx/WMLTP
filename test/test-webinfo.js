@@ -1,7 +1,7 @@
 console.log("Test APIs for Grasping web information...");
 
-const csv = require("../lib/savingcsvfile").SavingCSVFile;
-const Web = require("../lib/graspingwebinfo").GraspingWebInfo;
+const csv = require("../lib/saving-csv-file").SavingCSVFile;
+const Web = require("../lib/grasping-web-info").GraspingWebInfo;
 
 (async function() {
     let platforms = "ubuntu";
