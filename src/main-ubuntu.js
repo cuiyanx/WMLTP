@@ -43,7 +43,7 @@ global.CSV_HEADER = [
 
 var currentNode = null;
 var currentCommit = null;
-var packageURL = "http://127.0.0.1:8080/tmp/";
+var packageURL = "http://powerbuilder.sh.intel.com/public/webml/nightly/";
 var testResultURL = "http://brucedai.github.io/nt/test/index-local.html";
 var csvTitle = null;
 var csvModule = null;

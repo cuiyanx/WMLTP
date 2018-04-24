@@ -25,7 +25,7 @@ var newestDate = {
 
 var currentNode = null;
 var currentCommit = null;
-var remoteURL = "http://127.0.0.1:8080/tmp/";
+var remoteURL = "http://powerbuilder.sh.intel.com/public/webml/nightly/";
 var packageName = null;
 
 (async function() {
