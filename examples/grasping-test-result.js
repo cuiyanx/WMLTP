@@ -29,17 +29,7 @@ var csvPass = null;
 var csvFail = null;
 var csvExecution = "auto";
 var csvSuite = "tests";
-var remoteURL = "http://127.0.0.1:8080/test/";
-
-global.CSV_FORMAT = {
-    Feature: csvTitle,
-    CaseId: csvModule,
-    TestCase: csvName,
-    Pass : csvPass,
-    Fail: csvFail,
-    ExecutionType: csvExecution,
-    SuiteName: csvSuite
-};
+var remoteURL = "http://brucedai.github.io/nt/test/index-local.html";
 
 (async function() {
     var getName = async function(element) {
