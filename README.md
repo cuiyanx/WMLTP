@@ -3,11 +3,19 @@
 The WMLP is a test tool for [webml-polyfill](https://github.com/intel/webml-polyfill) with Google Chrome.
 
 ## Prerequisites
-* Run WMLP with Google Chrome, need [chromedriver](http://chromedriver.storage.googleapis.com/index.html).
+* Running WMLP with Google Chrome, need [chromedriver](http://chromedriver.storage.googleapis.com/index.html).
+
 ```sh
-    chromedriver(2.37)  -->  google-chrome(65.x.xxx)
+chromedriver(2.37)  -->  google-chrome(65.x.xxx)
 ```
-* If run WMLP on android device(>= 8.0), need adb server.
+
+* Add *chromedriver* to systerm path.
+
+```sh
+export PATH=<yourPath>:$PATH
+```
+
+* If running WMLP on android device(>= 8.0), need adb server.
 
 ## Install
 
@@ -16,14 +24,25 @@ $ npm install
 ```
 
 ## Start
+
+```sh
+$ npm start
+```
+
+### On ubuntu
+
+```sh
+$ npm run ubuntu
+```
+
 ### Grasping test result
 
 ```sh
 $ npm run testresult
 ```
 
-### Getting newest commit
+### Downloading newest package
 
 ```sh
-$ npm run commit
+$ npm run download
 ```

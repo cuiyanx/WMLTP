@@ -1,5 +1,25 @@
 'use strict';
 
+require("../lib/WMLP-init.js");
+
+global.CSV_HEADER = [
+    "Feature",
+    "CaseId",
+    "TestCase",
+    "Pass",
+    "Fail",
+    "N/A",
+    "Measured",
+    "Comment",
+    "MeasuredName",
+    "Value",
+    "Unit",
+    "Target",
+    "Failure",
+    "ExecutionType",
+    "SuiteName"
+];
+
 var countPasses = 0;
 var countFailures = 0;
 var csvTitle = null;
@@ -9,45 +29,29 @@ var csvPass = null;
 var csvFail = null;
 var csvExecution = "auto";
 var csvSuite = "tests";
+var remoteURL = "http://127.0.0.1:8080/test/";
 
-function checkDriver(driver) {
-    if (driver == null) {
-        throw new Error("Need chrome driver to grasp web info!");
-    }
-}
+global.CSV_FORMAT = {
+    Feature: csvTitle,
+    CaseId: csvModule,
+    TestCase: csvName,
+    Pass : csvPass,
+    Fail: csvFail,
+    ExecutionType: csvExecution,
+    SuiteName: csvSuite
+};
 
-function checkBy(By) {
-    if (By == null) {
-        throw new Error("Need By to grasp web info!");
-    }
-}
-
-function checkCSV(csv) {
-    if (csv == null) {
-        throw new Error("Need csv to save csv file!");
-    }
-}
-
-class TestResult {
-
-    constructor(){
-        this.By = null;
-        this.driver = null;
-        this.csv = null;
-    }
-
-    async getName(element) {
-        checkBy(this.By);
-
+(async function() {
+    var getName = async function(element) {
         let Text = null;
         let length = 0;
-        await element.findElement(this.By.xpath("./h2")).getText()
+        await element.findElement(global.OPERATE_BY.xpath("./h2")).getText()
             .then(function(message) {
             length = message.length - 1;
             Text = message;
         });
 
-        let arrayElement = await element.findElements(this.By.xpath("./h2/child::*"));
+        let arrayElement = await element.findElements(global.OPERATE_BY.xpath("./h2/child::*"));
         for (let j = 1; j <= arrayElement.length; j++) {
             await arrayElement[j - 1].getText()
                 .then(function(message) {
@@ -58,37 +62,30 @@ class TestResult {
         return Text.slice(0, length);
     }
 
-    async getError(element) {
-        checkBy(this.By);
-
-        let Text = await element.findElement(this.By.xpath("./pre[@class='error']")).getText();
+    var getError = async function(element) {
+        let Text = await element.findElement(global.OPERATE_BY.xpath("./pre[@class='error']")).getText();
 
         return Text;
     }
 
-    async getCode(element) {
-        checkBy(this.By);
-
-        let Text = await element.findElement(this.By.xpath("./pre[last()]")).getText();
+    var getCode = async function(element) {
+        let Text = await element.findElement(global.OPERATE_BY.xpath("./pre[last()]")).getText();
 
         return Text;
     }
 
-    async getInfo(element) {
-        checkBy(this.By);
-        checkCSV(this.csv);
-
+    var getInfo = async function(element) {
         let arrayTitles, arrayModule;
-        let array = await element.findElements(this.By.xpath("./ul/li[@class='test pass fast' or @class='test pass slow' or @class='test fail']"));
+        let array = await element.findElements(global.OPERATE_BY.xpath("./ul/li[@class='test pass fast' or @class='test pass slow' or @class='test fail']"));
 
         for (let i = 1; i <= array.length; i++) {
-            await this.getName(array[i - 1])
+            await getName(array[i - 1])
                 .then(function(message) {
                 csvName = message;
                 console.log("       " + i + ") " + message);
             });
 
-            await this.getError(array[i - 1])
+            await getError(array[i - 1])
                 .then(function(message) {
                 csvPass = null;
                 csvFail = "1";
@@ -114,7 +111,7 @@ class TestResult {
                 ExecutionType: csvExecution,
                 SuiteName: csvSuite
             };
-            await this.csv.WriteData(DataFormat);
+            await global.CSV_WRITE(DataFormat);
 
             csvName = null;
             csvPass = null;
@@ -122,75 +119,73 @@ class TestResult {
         }
     }
 
-    async check() {
-        checkDriver(this.driver);
-        checkBy(this.By);
-
-        console.log("---------------------------------------------------");
-
-        await this.driver.findElement(this.By.xpath("//ul[@id='mocha-stats']/li[@class='passes']//em")).getText()
+    var check = async function() {
+        await global.OPERATE_DRIVER.findElement(global.OPERATE_BY.xpath("//ul[@id='mocha-stats']/li[@class='passes']//em")).getText()
             .then(function(message) {
             let getPasses = message;
             console.log("    Web passes: " + getPasses);
             console.log("  Check passes: " + countPasses);
         });
 
-        await this.driver.findElement(this.By.xpath("//ul[@id='mocha-stats']/li[@class='failures']//em")).getText()
+        await global.OPERATE_DRIVER.findElement(global.OPERATE_BY.xpath("//ul[@id='mocha-stats']/li[@class='failures']//em")).getText()
             .then(function(message) {
             let getFailures = message;
             console.log("  Web failures: " + getFailures);
             console.log("Check failures: " + countFailures);
         });
 
-        await this.driver.findElement(this.By.xpath("//ul[@id='mocha-stats']/li[@class='duration']//em")).getText()
+        await global.OPERATE_DRIVER.findElement(global.OPERATE_BY.xpath("//ul[@id='mocha-stats']/li[@class='duration']//em")).getText()
             .then(function(message) {
             let Duration = message;
             console.log("      Duration: " + Duration + " ms");
         });
-
-        console.log("---------------------------------------------------");
     }
 
-    async grasp(driver, By, csv) {
-        this.driver = driver;
-        this.By = By;
-        this.csv = csv;
-
-        checkDriver(this.driver);
-        checkBy(this.By);
-        checkCSV(this.csv);
-
+    var grasp = async function() {
         // mocha-report
-        let arrayTitles = await this.driver.findElements(this.By.xpath("//ul[@id='mocha-report']/li[@class='suite']"));
+        let arrayTitles = await global.OPERATE_DRIVER.findElements(global.OPERATE_BY.xpath("//ul[@id='mocha-report']/li[@class='suite']"));
         for (let i = 1; i <= arrayTitles.length; i++) {
-            await arrayTitles[i - 1].findElement(this.By.xpath("./h1/a")).getText()
+            await arrayTitles[i - 1].findElement(global.OPERATE_BY.xpath("./h1/a")).getText()
                 .then(function(message) {
                 csvTitle = message;
                 csvModule = null;
                 console.log(i + ": " + csvTitle);
             });
 
-            let arrayModule = await arrayTitles[i - 1].findElements(this.By.xpath("./ul/li[@class='suite']"));
+            let arrayModule = await arrayTitles[i - 1].findElements(global.OPERATE_BY.xpath("./ul/li[@class='suite']"));
             for (let j = 1; j <= arrayModule.length; j++) {
-                await arrayModule[j - 1].findElement(this.By.xpath("./h1/a")).getText()
+                await arrayModule[j - 1].findElement(global.OPERATE_BY.xpath("./h1/a")).getText()
                     .then(function(message) {
                     let array = message.split("#");
                     csvModule = array[1];
                     console.log("    #" + j + ": " + csvModule);
                 });
 
-                await this.getInfo(arrayModule[j - 1]);
+                await getInfo(arrayModule[j - 1]);
             }
 
-            await this.getInfo(arrayTitles[i - 1]);
+            await getInfo(arrayTitles[i - 1]);
         }
 
         // mocha-stats
-        await this.check();
+        await check();
     }
 
-}
+    console.log(global.LOGGER_HEARD + "open csv file");
+    await global.CSV_OPEN();
 
-// PUBLIC API
+    console.log(global.LOGGER_HEARD + "open URL: " + remoteURL);
+    await global.CHROME_OPEN(remoteURL);
+    await global.CHROME_WAIT(10000);
 
-exports.TestResult = new TestResult();
+    console.log(global.LOGGER_HEARD + "start grasping test result");
+    await grasp();
+
+    console.log(global.LOGGER_HEARD + "finish grasping test result");
+    await global.CSV_CLOSE();
+    await global.CHROME_CLOSE();
+})().then(function() {
+    console.log("Grasping test result is completed!")
+}).catch(function(err) {
+    console.log(err)
+});

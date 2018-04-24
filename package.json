@@ -13,9 +13,10 @@
     "selenium-webdriver": "^4.0.0-alpha.1"
   },
   "scripts": {
-    "start": "npm run testresult",
-    "testresult": "node ./src/main-test-result.js",
-    "commit": "node ./src/main-newest-commit.js"
+    "start": "npm run ubuntu",
+    "ubuntu": "node ./src/main-ubuntu.js ubuntu",
+    "testresult": "node ./examples/grasping-test-result.js ubuntu",
+    "download": "node ./examples/grasping-newest-package.js ubuntu"
   },
   "repository": {
     "type": "git",
