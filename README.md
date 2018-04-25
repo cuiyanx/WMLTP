@@ -29,20 +29,20 @@ $ npm install
 $ npm start
 ```
 
-### On ubuntu
-
-```sh
-$ npm run ubuntu
-```
-
-### Grasping test result
-
-```sh
-$ npm run testresult
-```
-
-### Downloading newest package
+### Download newest package
 
 ```sh
 $ npm run download
+```
+
+### Install newest package
+
+```sh
+$ npm run install
+```
+
+### Grasp test result
+
+```sh
+$ npm run testresult
 ```

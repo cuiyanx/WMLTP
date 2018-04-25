@@ -26,7 +26,7 @@ var newestDate = {
 var currentNode = null;
 var currentCommit = null;
 var remoteURL = "http://powerbuilder.sh.intel.com/public/webml/nightly/";
-var packageName = null;
+var flag = false;
 
 (async function() {
     var graspCommit = async function() {
@@ -34,7 +34,7 @@ var packageName = null;
         for (let i = 1; i <= arrayCommit.length; i++) {
             await arrayCommit[i - 1].findElement(global.OPERATE_BY.xpath("../td[2]")).getText()
                 .then(function(message) {
-                console.log(i + ": " + message.split("/")[0]);
+                console.log("   " + i + ": " + message.split("/")[0]);
             });
 
             await arrayCommit[i - 1].findElement(global.OPERATE_BY.xpath("../td[3]")).getText()
@@ -69,28 +69,35 @@ var packageName = null;
         await currentNode.findElement(global.OPERATE_BY.xpath("../td[2]")).getText()
             .then(function(message) {
             currentCommit = message.split("/")[0];
+
+            if (currentCommit != global.NEWEST_COMMIT) {
+                global.WRITE_COMMIT(currentCommit);
+                flag = true;
+            } else {
+                flag = false;
+            }
         });
 
-        console.log("Newest commit: " + currentCommit);
+        console.log("----Newest commit: " + global.NEWEST_COMMIT);
     }
 
-    var graspName = async function() {
+    var graspName = async function(suffix) {
         let arrayCommit = await global.OPERATE_DRIVER.findElements(global.OPERATE_BY.xpath("//table/tbody/tr/td[@valign='top']"));
         for (let i = 1; i <= arrayCommit.length; i++) {
             await arrayCommit[i - 1].findElement(global.OPERATE_BY.xpath("../td[2]")).getText()
                 .then(function(message) {
                 let array = message.split(".");
                 for (let x in array) {
-                    if (array[x] == "deb") {
-                        packageName = message;
+                    if (array[x] == suffix) {
+                        global.WRITE_PACKAGE(message);
                         break;
                     }
                 }
-                console.log(i + ": " + message);
+                console.log("   " + i + ": " + message);
             });
         }
 
-        console.log("Newest package name: " + packageName);
+        console.log("----Newest package name: " + global.NEWEST_PACKAGE);
     }
 
     console.log(global.LOGGER_HEARD + "open URL: " + remoteURL);
@@ -98,24 +105,32 @@ var packageName = null;
     await global.CHROME_WAIT(10000);
 
     await graspCommit();
-    console.log(global.LOGGER_HEARD + "grasp newest commit: " + currentCommit);
+    console.log(global.LOGGER_HEARD + "grasp newest commit: " + global.NEWEST_COMMIT);
+    console.log(global.LOGGER_HEARD + "is newest package: " + flag);
 
-    remoteURL = remoteURL + currentCommit + "/linux_x64_SUCCEED/";
-    console.log(global.LOGGER_HEARD + "open URL: " + remoteURL);
-    await global.CHROME_OPEN(remoteURL);
-    await global.CHROME_WAIT(10000);
+    if (flag) {
+        let platform, suffix;
+        if (global.TEST_PLATFORM == "ubuntu") {
+            platform = "/linux_x64_SUCCEED/";
+            suffix = "deb";
+        }
+        remoteURL = remoteURL + global.NEWEST_COMMIT + platform;
+        console.log(global.LOGGER_HEARD + "open download URL: " + remoteURL);
+        await global.CHROME_OPEN(remoteURL);
+        await global.CHROME_WAIT(10000);
 
-    await graspName();
-    console.log(global.LOGGER_HEARD + "grasp newest package: " + packageName);
+        await graspName(suffix);
+        console.log(global.LOGGER_HEARD + "grasp newest package: " + global.NEWEST_PACKAGE);
 
-    remoteURL = remoteURL + packageName;
-    console.log(global.LOGGER_HEARD + "download newest package: " + remoteURL);
-    await global.TOOLS_DOWNLOAD(remoteURL);
-    await global.CHROME_WAIT(10000);
+        remoteURL = remoteURL + global.NEWEST_PACKAGE;
+        console.log(global.LOGGER_HEARD + "download newest package: " + remoteURL);
+        await global.TOOLS_DOWNLOAD(remoteURL);
+        await global.CHROME_WAIT(10000);
+    }
 
     await global.CHROME_CLOSE();
 })().then(function() {
-    console.log("Grasping newest commit is completed!")
+    console.log("Downloading newest package is completed!");
 }).catch(function(err) {
-    console.log(err)
+    console.log("Error" + err);
 });

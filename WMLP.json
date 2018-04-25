@@ -1,0 +1,13 @@
+{
+    "platform": "ubuntu",
+    "password": {
+        "ubuntu": "1qaz@WSX",
+        "mac": null,
+        "window": null,
+        "android": null,
+        "ios": null
+    },
+    "webml": true,
+    "commit": null,
+    "package": null
+}

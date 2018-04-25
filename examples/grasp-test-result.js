@@ -175,7 +175,7 @@ var remoteURL = "http://brucedai.github.io/nt/test/index-local.html";
     await global.CSV_CLOSE();
     await global.CHROME_CLOSE();
 })().then(function() {
-    console.log("Grasping test result is completed!")
+    console.log("Grasping test result is completed!");
 }).catch(function(err) {
-    console.log(err)
+    console.log("Error" + err);
 });
