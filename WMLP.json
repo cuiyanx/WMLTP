@@ -1,13 +1,15 @@
 {
-    "platform": "ubuntu",
+    "platform": {
+        "test": "ubuntu",
+        "run": "ubuntu"
+    },
     "password": {
         "ubuntu": "1qaz@WSX",
         "mac": null,
-        "window": null,
-        "android": null,
-        "ios": null
+        "window": null
     },
-    "webml": true,
+    "webmlpolyfill": true,
     "commit": null,
-    "package": null
+    "package": null,
+    "downloadflag": true
 }

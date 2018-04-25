@@ -26,7 +26,7 @@ var newestDate = {
 var currentNode = null;
 var currentCommit = null;
 var remoteURL = "http://powerbuilder.sh.intel.com/public/webml/nightly/";
-var flag = false;
+//var remoteURL = "http://127.0.0.1:8080/tmp/";
 
 (async function() {
     var graspCommit = async function() {
@@ -72,9 +72,9 @@ var flag = false;
 
             if (currentCommit != global.NEWEST_COMMIT) {
                 global.WRITE_COMMIT(currentCommit);
-                flag = true;
+                global.WRITE_DLFLAG(true);
             } else {
-                flag = false;
+                global.WRITE_DLFLAG(false);
             }
         });
 
@@ -106,9 +106,9 @@ var flag = false;
 
     await graspCommit();
     console.log(global.LOGGER_HEARD + "grasp newest commit: " + global.NEWEST_COMMIT);
-    console.log(global.LOGGER_HEARD + "is newest package: " + flag);
+    console.log(global.LOGGER_HEARD + "is newest package: " + global.DOWNLOAD_FLAG);
 
-    if (flag) {
+    if (global.DOWNLOAD_FLAG) {
         let platform, suffix;
         if (global.TEST_PLATFORM == "ubuntu") {
             platform = "/linux_x64_SUCCEED/";

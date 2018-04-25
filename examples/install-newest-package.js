@@ -8,12 +8,17 @@ if (global.NEWEST_PACKAGE == null) {
 
 var localPath = global.PACKAGE_PATH + global.NEWEST_PACKAGE;
 
-(async function() {
-    console.log(global.LOGGER_HEARD + "install newest package: " + localPath);
-    await global.TOOLS_INSTALL(localPath);
-    await global.CHROME_CLOSE();
-})().then(function() {
-    console.log("Installing package is completed!");
-}).catch(function(err) {
-    console.log("Error" + err);
-});
+if (global.DOWNLOAD_FLAG) {
+    (async function() {
+        console.log(global.LOGGER_HEARD + "install newest package: " + localPath);
+        await global.TOOLS_INSTALL(localPath);
+    })().then(function() {
+        console.log("Installing package is completed!");
+    }).catch(function(err) {
+        console.log("Error" + err);
+    });
+} else {
+    console.log(global.LOGGER_HEARD + "no need install newest package");
+}
+
+global.CHROME_CLOSE();
