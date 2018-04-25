@@ -1,6 +1,7 @@
 # WMLP
 
-The WMLP is a test tool for [webml-polyfill](https://github.com/intel/webml-polyfill) with Google Chrome.
+The WMLP(Web Machine Learning test Platform) is a nightly automation test framework for [webml-polyfill](https://github.com/intel/webml-polyfill) with Google Chrome.
+Now, we support Linux platform (Ubuntu 16.04), we will support android device, Mac, IOS and Windows.
 
 ## Prerequisites
 * Running WMLP with Google Chrome, need [chromedriver](http://chromedriver.storage.googleapis.com/index.html).
@@ -15,7 +16,7 @@ chromedriver(2.37)  -->  google-chrome(65.x.xxx)
 export PATH=<yourPath>:$PATH
 ```
 
-* If running WMLP on android device(>= 8.0), need adb server.
+* If running WMLP on android device(>= 8.0), need *adb server*.
 
 ## Install
 
