@@ -10,6 +10,12 @@
     },
     "webmlpolyfill": true,
     "commit": null,
-    "package": null,
+    "package": {
+        "ubuntu": null,
+        "mac": null,
+        "window": null,
+        "android": null,
+        "ios": null
+    },
     "downloadflag": true
 }

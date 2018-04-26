@@ -30,14 +30,14 @@ var remoteURL = "http://powerbuilder.sh.intel.com/public/webml/nightly/";
 
 (async function() {
     var graspCommit = async function() {
-        let arrayCommit = await global.OPERATE_DRIVER.findElements(global.OPERATE_BY.xpath("//table/tbody/tr/td[@valign='top']"));
+        let arrayCommit = await MODULE_CHROME.driver.findElements(MODULE_CHROME.by.xpath("//table/tbody/tr/td[@valign='top']"));
         for (let i = 1; i <= arrayCommit.length; i++) {
-            await arrayCommit[i - 1].findElement(global.OPERATE_BY.xpath("../td[2]")).getText()
+            await arrayCommit[i - 1].findElement(MODULE_CHROME.by.xpath("../td[2]")).getText()
                 .then(function(message) {
                 console.log("   " + i + ": " + message.split("/")[0]);
             });
 
-            await arrayCommit[i - 1].findElement(global.OPERATE_BY.xpath("../td[3]")).getText()
+            await arrayCommit[i - 1].findElement(MODULE_CHROME.by.xpath("../td[3]")).getText()
                 .then(function(message) {
                 let array = message.split(" ");
                 array = array[0].split("-");
@@ -66,30 +66,30 @@ var remoteURL = "http://powerbuilder.sh.intel.com/public/webml/nightly/";
             });
         }
 
-        await currentNode.findElement(global.OPERATE_BY.xpath("../td[2]")).getText()
+        await currentNode.findElement(MODULE_CHROME.by.xpath("../td[2]")).getText()
             .then(function(message) {
             currentCommit = message.split("/")[0];
 
-            if (currentCommit != global.NEWEST_COMMIT) {
-                global.WRITE_COMMIT(currentCommit);
-                global.WRITE_DLFLAG(true);
+            if (currentCommit != MODULE_JSON.commit) {
+                MODULE_JSON.writeCommit(currentCommit);
+                MODULE_JSON.writeFlag(true);
             } else {
-                global.WRITE_DLFLAG(false);
+                MODULE_JSON.writeFlag(false);
             }
         });
 
-        console.log("----Newest commit: " + global.NEWEST_COMMIT);
+        console.log("----Newest commit: " + MODULE_JSON.commit);
     }
 
     var graspName = async function(suffix) {
-        let arrayCommit = await global.OPERATE_DRIVER.findElements(global.OPERATE_BY.xpath("//table/tbody/tr/td[@valign='top']"));
+        let arrayCommit = await MODULE_CHROME.driver.findElements(MODULE_CHROME.by.xpath("//table/tbody/tr/td[@valign='top']"));
         for (let i = 1; i <= arrayCommit.length; i++) {
-            await arrayCommit[i - 1].findElement(global.OPERATE_BY.xpath("../td[2]")).getText()
+            await arrayCommit[i - 1].findElement(MODULE_CHROME.by.xpath("../td[2]")).getText()
                 .then(function(message) {
                 let array = message.split(".");
                 for (let x in array) {
                     if (array[x] == suffix) {
-                        global.WRITE_PACKAGE(message);
+                        MODULE_JSON.writePackage(message);
                         break;
                     }
                 }
@@ -97,38 +97,41 @@ var remoteURL = "http://powerbuilder.sh.intel.com/public/webml/nightly/";
             });
         }
 
-        console.log("----Newest package name: " + global.NEWEST_PACKAGE);
+        console.log("----Newest package name: " + MODULE_JSON.package);
     }
 
-    console.log(global.LOGGER_HEARD + "open URL: " + remoteURL);
-    await global.CHROME_OPEN(remoteURL);
-    await global.CHROME_WAIT(10000);
+    console.log(LOGGER_HEARD + "open URL: " + remoteURL);
+    await MODULE_CHROME.create();
+    await MODULE_CHROME.open(remoteURL);
+    await MODULE_CHROME.wait(10000);
 
+    await MODULE_JSON.open();
     await graspCommit();
-    console.log(global.LOGGER_HEARD + "grasp newest commit: " + global.NEWEST_COMMIT);
-    console.log(global.LOGGER_HEARD + "is newest package: " + global.DOWNLOAD_FLAG);
+    console.log(LOGGER_HEARD + "grasp newest commit: " + MODULE_JSON.commit);
+    console.log(LOGGER_HEARD + "is newest package: " + MODULE_JSON.flag);
 
-    if (global.DOWNLOAD_FLAG) {
+    if (MODULE_JSON.flag) {
         let platform, suffix;
-        if (global.TEST_PLATFORM == "ubuntu") {
+        if (TEST_PLATFORM == "ubuntu") {
             platform = "/linux_x64_SUCCEED/";
             suffix = "deb";
         }
-        remoteURL = remoteURL + global.NEWEST_COMMIT + platform;
-        console.log(global.LOGGER_HEARD + "open download URL: " + remoteURL);
-        await global.CHROME_OPEN(remoteURL);
-        await global.CHROME_WAIT(10000);
+        remoteURL = remoteURL + MODULE_JSON.commit + platform;
+        console.log(LOGGER_HEARD + "open download URL: " + remoteURL);
+        await MODULE_CHROME.open(remoteURL);
+        await MODULE_CHROME.wait(10000);
 
         await graspName(suffix);
-        console.log(global.LOGGER_HEARD + "grasp newest package: " + global.NEWEST_PACKAGE);
+        console.log(LOGGER_HEARD + "grasp newest package: " + MODULE_JSON.package);
 
-        remoteURL = remoteURL + global.NEWEST_PACKAGE;
-        console.log(global.LOGGER_HEARD + "download newest package: " + remoteURL);
-        await global.TOOLS_DOWNLOAD(remoteURL);
-        await global.CHROME_WAIT(10000);
+        remoteURL = remoteURL + MODULE_JSON.package;
+        console.log(LOGGER_HEARD + "download newest package: " + remoteURL);
+        await MODULE_TOOLS.download(remoteURL);
+        await MODULE_CHROME.wait(10000);
     }
 
-    await global.CHROME_CLOSE();
+    await MODULE_CHROME.close();
+    await MODULE_JSON.close();
 })().then(function() {
     console.log("Downloading newest package is completed!");
 }).catch(function(err) {

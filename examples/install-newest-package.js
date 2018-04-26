@@ -2,23 +2,25 @@
 
 require("../lib/WMLP-init.js");
 
-if (global.NEWEST_PACKAGE == null) {
+MODULE_JSON.open();
+
+if (MODULE_JSON.package == null) {
     throw new Error("Need package name");
 }
 
-var localPath = global.PACKAGE_PATH + global.NEWEST_PACKAGE;
+var localPath = PACKAGE_PATH + MODULE_JSON.package;
 
-if (global.DOWNLOAD_FLAG) {
+if (MODULE_JSON.flag) {
     (async function() {
-        console.log(global.LOGGER_HEARD + "install newest package: " + localPath);
-        await global.TOOLS_INSTALL(localPath);
+        console.log(LOGGER_HEARD + "install newest package: " + localPath);
+        await MODULE_TOOLS.install(localPath);
     })().then(function() {
         console.log("Installing package is completed!");
     }).catch(function(err) {
         console.log("Error" + err);
     });
 } else {
-    console.log(global.LOGGER_HEARD + "no need install newest package");
+    console.log(LOGGER_HEARD + "no need install newest package");
 }
 
-global.CHROME_CLOSE();
+MODULE_JSON.close();

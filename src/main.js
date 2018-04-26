@@ -1,5 +1,3 @@
-'use strict';
-
 console.log("Test start....");
 
 const childProcess = require("child_process");
