@@ -13,10 +13,9 @@
     "selenium-webdriver": "^4.0.0-alpha.1"
   },
   "scripts": {
-    "start": "npm run main",
-    "main": "node ./src/main.js",
-    "download": "node ./examples/download-newest-package.js",
-    "install": "node ./examples/install-newest-package.js",
+    "start": "node ./src/main.js",
+    "downloadpackage": "node ./examples/download-newest-package.js",
+    "installpackage": "node ./examples/install-newest-package.js",
     "testresult": "node ./examples/grasp-test-result.js"
   },
   "repository": {

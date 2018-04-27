@@ -4,10 +4,6 @@ require("../lib/WMLP-init.js");
 
 MODULE_JSON.open();
 
-if (MODULE_JSON.package == null) {
-    throw new Error("Need package name");
-}
-
 var localPath = PACKAGE_PATH + MODULE_JSON.package;
 
 if (MODULE_JSON.flag) {

@@ -33,13 +33,13 @@ $ npm start
 ### Download newest package
 
 ```sh
-$ npm run download
+$ npm run downloadpackage
 ```
 
 ### Install newest package
 
 ```sh
-$ npm run install
+$ npm run installpackage
 ```
 
 ### Grasp test result
