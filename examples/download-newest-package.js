@@ -25,8 +25,8 @@ var newestDate = {
 
 var currentNode = null;
 var currentCommit = null;
-var remoteURL = "http://powerbuilder.sh.intel.com/public/webml/nightly/";
-//var remoteURL = "http://127.0.0.1:8080/tmp/";
+//var remoteURL = "http://powerbuilder.sh.intel.com/public/webml/nightly/";
+var remoteURL = "http://10.126.1.203:8080/tmp/";
 
 (async function() {
     var graspCommit = async function() {
@@ -115,7 +115,11 @@ var remoteURL = "http://powerbuilder.sh.intel.com/public/webml/nightly/";
         if (TEST_PLATFORM == "ubuntu") {
             platform = "/linux_x64_SUCCEED/";
             suffix = "deb";
+        } else if (TEST_PLATFORM == "mac") {
+            platform = "/mac_x64_SUCCEED/";
+            suffix = "zip";
         }
+
         remoteURL = remoteURL + MODULE_JSON.commit + platform;
         console.log(LOGGER_HEARD + "open download URL: " + remoteURL);
         await MODULE_CHROME.open(remoteURL);

@@ -165,6 +165,7 @@ var remoteURL = "http://brucedai.github.io/nt/test/index-local.html";
     await MODULE_CSV.open();
 
     console.log(LOGGER_HEARD + "open URL: " + remoteURL);
+    await MODULE_CHROME.setBrowserNewest(true);
     await MODULE_CHROME.create();
     await MODULE_CHROME.open(remoteURL);
     await MODULE_CHROME.wait(10000);
