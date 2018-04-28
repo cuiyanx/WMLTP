@@ -1,19 +1,16 @@
 {
-    "platform": {
-        "test": "ubuntu",
-        "run": "ubuntu"
-    },
+    "platform": "linux",
     "password": {
-        "ubuntu": "1qaz@WSX",
+        "linux": "1qaz@WSX",
         "mac": null,
-        "window": null
+        "windows": null
     },
     "webmlpolyfill": true,
     "commit": null,
     "package": {
-        "ubuntu": null,
+        "linux": null,
         "mac": null,
-        "window": null,
+        "windows": null,
         "android": null,
         "ios": null
     },

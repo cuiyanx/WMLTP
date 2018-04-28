@@ -112,7 +112,7 @@ var remoteURL = "http://10.126.1.203:8080/tmp/";
 
     if (MODULE_JSON.flag) {
         let platform, suffix;
-        if (TEST_PLATFORM == "ubuntu") {
+        if (TEST_PLATFORM == "linux") {
             platform = "/linux_x64_SUCCEED/";
             suffix = "deb";
         } else if (TEST_PLATFORM == "mac") {
