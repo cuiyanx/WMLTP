@@ -1,18 +1,44 @@
 {
-    "platform": "linux",
+    "platform": [
+        "linux"
+    ],
     "password": {
         "linux": "1qaz@WSX",
         "mac": null,
         "windows": null
     },
+    "currentplatform": null,
     "webmlpolyfill": true,
     "commit": null,
-    "package": {
-        "linux": null,
-        "mac": null,
-        "windows": null,
-        "android": null,
-        "ios": null
+    "downloadflag": false,
+    "linux": {
+        "package": null,
+        "path": "linux_x64_SUCCEED/",
+        "suffix": "deb",
+        "md5": null
     },
-    "downloadflag": true
+    "mac": {
+        "package": null,
+        "path": "mac_x64_SUCCEED/",
+        "suffix": "zip",
+        "md5": null
+    },
+    "windows": {
+        "package": null,
+        "path": null,
+        "suffix": null,
+        "md5": null
+    },
+    "android": {
+        "package": null,
+        "path": null,
+        "suffix": null,
+        "md5": null
+    },
+    "ios": {
+        "package": null,
+        "path": null,
+        "suffix": null,
+        "md5": null
+    }
 }

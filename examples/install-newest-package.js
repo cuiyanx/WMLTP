@@ -1,12 +1,10 @@
-'use strict';
-
 require("../lib/WMLP-init.js");
 
 MODULE_JSON.open();
 
-var localPath = PACKAGE_PATH + MODULE_JSON.package;
+var localPath = PACKAGE_PATH + MODULE_JSON.getPath() + MODULE_JSON.getPackage();
 
-if (MODULE_JSON.flag) {
+if (MODULE_JSON.getFlag()) {
     (async function() {
         console.log(LOGGER_HEARD + "install newest package: " + localPath);
         await MODULE_TOOLS.install(localPath);

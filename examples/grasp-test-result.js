@@ -1,5 +1,3 @@
-'use strict';
-
 require("../lib/WMLP-init.js");
 
 MODULE_CSV.header = [
@@ -163,6 +161,7 @@ var remoteURL = "http://brucedai.github.io/nt/test/index-local.html";
 
     console.log(LOGGER_HEARD + "open csv file");
     await MODULE_CSV.open();
+    await MODULE_JSON.open();
 
     console.log(LOGGER_HEARD + "open URL: " + remoteURL);
     await MODULE_CHROME.setBrowserNewest(true);
@@ -174,6 +173,7 @@ var remoteURL = "http://brucedai.github.io/nt/test/index-local.html";
     await grasp();
 
     console.log(LOGGER_HEARD + "finish grasping test result");
+    await MODULE_JSON.close();
     await MODULE_CSV.close();
     await MODULE_CHROME.close();
 })().then(function() {

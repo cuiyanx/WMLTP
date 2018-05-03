@@ -1,5 +1,3 @@
-'use strict';
-
 require("../lib/WMLP-init.js");
 
 const monTransform = {
@@ -25,8 +23,8 @@ var newestDate = {
 
 var currentNode = null;
 var currentCommit = null;
-//var remoteURL = "http://powerbuilder.sh.intel.com/public/webml/nightly/";
-var remoteURL = "http://10.126.1.203:8080/tmp/";
+var remoteURL = "http://powerbuilder.sh.intel.com/public/webml/nightly/";
+//var remoteURL = "http://10.126.1.201:8080/tmp/";
 
 (async function() {
     var graspCommit = async function() {
@@ -70,15 +68,12 @@ var remoteURL = "http://10.126.1.203:8080/tmp/";
             .then(function(message) {
             currentCommit = message.split("/")[0];
 
-            if (currentCommit != MODULE_JSON.commit) {
+            if (currentCommit != MODULE_JSON.getCommit()) {
                 MODULE_JSON.writeCommit(currentCommit);
-                MODULE_JSON.writeFlag(true);
-            } else {
-                MODULE_JSON.writeFlag(false);
             }
         });
 
-        console.log("----Newest commit: " + MODULE_JSON.commit);
+        console.log("    Newest commit: " + MODULE_JSON.getCommit());
     }
 
     var graspName = async function(suffix) {
@@ -97,7 +92,7 @@ var remoteURL = "http://10.126.1.203:8080/tmp/";
             });
         }
 
-        console.log("----Newest package name: " + MODULE_JSON.package);
+        console.log("    Newest package name: " + MODULE_JSON.getPackage());
     }
 
     console.log(LOGGER_HEARD + "open URL: " + remoteURL);
@@ -107,32 +102,33 @@ var remoteURL = "http://10.126.1.203:8080/tmp/";
 
     await MODULE_JSON.open();
     await graspCommit();
-    console.log(LOGGER_HEARD + "grasp newest commit: " + MODULE_JSON.commit);
-    console.log(LOGGER_HEARD + "is newest package: " + MODULE_JSON.flag);
+    console.log(LOGGER_HEARD + "grasp newest commit: " + MODULE_JSON.getCommit());
 
-    if (MODULE_JSON.flag) {
-        let platform, suffix;
-        if (TEST_PLATFORM == "linux") {
-            platform = "/linux_x64_SUCCEED/";
-            suffix = "deb";
-        } else if (TEST_PLATFORM == "mac") {
-            platform = "/mac_x64_SUCCEED/";
-            suffix = "zip";
-        }
+    remoteURL = remoteURL + MODULE_JSON.getCommit() + "/" + MODULE_JSON.getPath();
+    console.log(LOGGER_HEARD + "open download URL: " + remoteURL);
+    await MODULE_CHROME.open(remoteURL);
+    await MODULE_CHROME.wait(10000);
 
-        remoteURL = remoteURL + MODULE_JSON.commit + platform;
-        console.log(LOGGER_HEARD + "open download URL: " + remoteURL);
-        await MODULE_CHROME.open(remoteURL);
-        await MODULE_CHROME.wait(10000);
+    await graspName(MODULE_JSON.getSuffix());
+    console.log(LOGGER_HEARD + "grasp newest package: " + MODULE_JSON.getPackage());
 
-        await graspName(suffix);
-        console.log(LOGGER_HEARD + "grasp newest package: " + MODULE_JSON.package);
+    remoteURL = remoteURL + MODULE_JSON.getPackage();
+    console.log(LOGGER_HEARD + "download newest package: " + remoteURL);
+    await MODULE_TOOLS.download(remoteURL);
+    await MODULE_CHROME.wait(10000);
 
-        remoteURL = remoteURL + MODULE_JSON.package;
-        console.log(LOGGER_HEARD + "download newest package: " + remoteURL);
-        await MODULE_TOOLS.download(remoteURL);
-        await MODULE_CHROME.wait(10000);
+    let path = PACKAGE_PATH + MODULE_JSON.getPath() + MODULE_JSON.getPackage();
+    let md5New = await MODULE_TOOLS.check(path);
+    console.log(LOGGER_HEARD + "newest md5 value: " + md5New);
+    console.log(LOGGER_HEARD + "old md5 value: " + MODULE_JSON.getMd5());
+
+    if (md5New == MODULE_JSON.getMd5()) {
+        await MODULE_JSON.writeFlag(false);
+    } else {
+        await MODULE_JSON.writeFlag(true);
+        await MODULE_JSON.writeMd5(md5New);
     }
+    console.log(LOGGER_HEARD + "newest package: " + MODULE_JSON.getFlag());
 
     await MODULE_CHROME.close();
     await MODULE_JSON.close();
