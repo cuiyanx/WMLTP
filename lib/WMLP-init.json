@@ -1,5 +1,6 @@
 {
     "platform": [
+        "linux",
         "linux"
     ],
     "password": {
@@ -7,10 +8,9 @@
         "mac": null,
         "windows": null
     },
-    "currentplatform": null,
     "webmlpolyfill": true,
     "commit": null,
-    "downloadflag": false,
+    "downloadflag": true,
     "linux": {
         "package": null,
         "path": "linux_x64_SUCCEED/",

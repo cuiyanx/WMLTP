@@ -1,20 +1,23 @@
 require("../lib/WMLP-init.js");
 
-MODULE_JSON.open();
+(async function() {
+    for (let x in TARGET_PLATFORMS) {
+        TEST_PLATFORM = TARGET_PLATFORMS[x];
 
-var localPath = PACKAGE_PATH + MODULE_JSON.getPath() + MODULE_JSON.getPackage();
+        let localPath = PACKAGE_PATH + MODULE_JSON.getPath() + MODULE_JSON.getPackage();
 
-if (MODULE_JSON.getFlag()) {
-    (async function() {
-        console.log(LOGGER_HEARD + "install newest package: " + localPath);
-        await MODULE_TOOLS.install(localPath);
-    })().then(function() {
-        console.log("Installing package is completed!");
-    }).catch(function(err) {
-        console.log("Error" + err);
-    });
-} else {
-    console.log(LOGGER_HEARD + "no need install newest package");
-}
+        let checkResult = await MODULE_TOOLS.check(localPath);
+        console.log(LOGGER_HEARD() + "check newest package: " + checkResult);
 
-MODULE_JSON.close();
+        if (MODULE_JSON.getFlag()) {
+            console.log(LOGGER_HEARD() + "install newest package: " + MODULE_JSON.getFlag());
+            await MODULE_TOOLS.install(localPath);
+        } else {
+            console.log(LOGGER_HEARD() + "no need install newest package");
+        }
+    }
+})().then(function() {
+    console.log("Installing package is completed!");
+}).catch(function(err) {
+    console.log("Error" + err);
+});
