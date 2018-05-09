@@ -1,6 +1,5 @@
 {
     "platform": [
-        "linux",
         "linux"
     ],
     "password": {
@@ -31,8 +30,8 @@
     },
     "android": {
         "package": null,
-        "path": null,
-        "suffix": null,
+        "path": "android_arm_SUCCEED/",
+        "suffix": "apk",
         "md5": null
     },
     "ios": {

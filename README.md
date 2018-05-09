@@ -7,15 +7,18 @@ Now, we support Linux(Ubuntu 16.04) and Mac platform, we will support android de
 * Installing last version Google Chrome Browser(65.x.xxx).
 * Running WMLP with Google Chrome, need [chromedriver](http://chromedriver.storage.googleapis.com/index.html).
 
-```sh
-chromedriver(2.37)  -->  google-chrome(65.x.xxx)
-```
+   ```sh
+   chromedriver(2.37)  -->  google-chrome(65.x.xxx)
+   ```
 
-* Add *chromedriver* to systerm path or copy *chromedriver* to `/usr/local/bin/`.
+* Add *chromedriver* to systerm path.
+   + For linux:
 
-```sh
-export PATH=<yourPath>:$PATH
-```
+      ```sh
+      export PATH=<yourPath>:$PATH
+      ```
+
+   + For mac: copy *chromedriver* to `/usr/local/bin/`
 
 * If running WMLP on android device(>= 8.0), need *adb server*.
 
@@ -31,30 +34,46 @@ $ npm install
 $ npm start
 ```
 
-### Download newest package
+#### Download newest package
 
 ```sh
 $ npm run downloadpackage
 ```
 
-### Install newest package
+#### Install newest package
 
 ```sh
 $ npm run installpackage
 ```
 
-### Grasp test result
+#### Grasp test result
 
 ```sh
 $ npm run testresult
 ```
+
+****NOTE:**** for android, please installing newest package manually.
+
+## Set WMLP-init.json file
+
+* `platform`: test platforms(one or more)
+* `password`: supper user password for running platform
+* `webmlpolyfill`: test web page using [webml-polyfill](https://github.com/intel/webml-polyfill)
+* `path`: level-2 path
+* `suffix`: the suffix name of package
+* `others`: automatic setting
 
 ## Support platform
 
 | Run Platform  | Test Platform |  Result |
 |     :---:     |     :---:     |  :---:  |
 | Ubuntu 16.04  | Ubuntu 16.04  |   pass  |
-| Ubuntu 16.04  |  Android 8.0  |   todo  |
+| Ubuntu 16.04  |  Android 8.0  |   pass  |
 |      Mac      |       Mac     |   pass  |
 |      Mac      |       IOS     |   todo  |
 |    Windows    |     Windows   |   todo  |
+
+## Output file
+
+* `/output/report/`: grasp test result to save as csv file
+* `/output/package/`: download package to install
