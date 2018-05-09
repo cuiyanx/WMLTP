@@ -159,23 +159,25 @@ var remoteURL = "http://brucedai.github.io/nt/test/index-local.html";
         await check();
     }
 
-    console.log(LOGGER_HEARD + "open csv file");
-    await MODULE_CSV.open();
-    await MODULE_JSON.open();
+    for (let x in TARGET_PLATFORMS) {
+        TEST_PLATFORM = TARGET_PLATFORMS[x];
 
-    console.log(LOGGER_HEARD + "open URL: " + remoteURL);
-    await MODULE_CHROME.setBrowserNewest(true);
-    await MODULE_CHROME.create();
-    await MODULE_CHROME.open(remoteURL);
-    await MODULE_CHROME.wait(10000);
+        console.log(LOGGER_HEARD() + "open csv file");
+        await MODULE_CSV.open();
 
-    console.log(LOGGER_HEARD + "start grasping test result");
-    await grasp();
+        console.log(LOGGER_HEARD() + "open URL: " + remoteURL);
+        await MODULE_CHROME.setBrowserNewest(true);
+        await MODULE_CHROME.create();
+        await MODULE_CHROME.open(remoteURL);
+        await MODULE_CHROME.wait(10000);
 
-    console.log(LOGGER_HEARD + "finish grasping test result");
-    await MODULE_JSON.close();
-    await MODULE_CSV.close();
-    await MODULE_CHROME.close();
+        console.log(LOGGER_HEARD() + "start grasping test result");
+        await grasp();
+
+        console.log(LOGGER_HEARD() + "finish grasping test result");
+        await MODULE_CSV.close();
+        await MODULE_CHROME.close();
+    }
 })().then(function() {
     console.log("Grasping test result is completed!");
 }).catch(function(err) {

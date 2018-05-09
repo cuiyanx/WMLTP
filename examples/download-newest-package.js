@@ -95,43 +95,33 @@ var remoteURL = "http://powerbuilder.sh.intel.com/public/webml/nightly/";
         console.log("    Newest package name: " + MODULE_JSON.getPackage());
     }
 
-    console.log(LOGGER_HEARD + "open URL: " + remoteURL);
+    console.log(LOGGER_HEARD() + "open URL: " + remoteURL);
+    await MODULE_CHROME.setBrowserNewest(false);
     await MODULE_CHROME.create();
     await MODULE_CHROME.open(remoteURL);
     await MODULE_CHROME.wait(10000);
 
-    await MODULE_JSON.open();
     await graspCommit();
-    console.log(LOGGER_HEARD + "grasp newest commit: " + MODULE_JSON.getCommit());
+    console.log(LOGGER_HEARD() + "grasp newest commit: " + MODULE_JSON.getCommit());
 
-    remoteURL = remoteURL + MODULE_JSON.getCommit() + "/" + MODULE_JSON.getPath();
-    console.log(LOGGER_HEARD + "open download URL: " + remoteURL);
-    await MODULE_CHROME.open(remoteURL);
-    await MODULE_CHROME.wait(10000);
+    for (let x in TARGET_PLATFORMS) {
+        TEST_PLATFORM = TARGET_PLATFORMS[x];
 
-    await graspName(MODULE_JSON.getSuffix());
-    console.log(LOGGER_HEARD + "grasp newest package: " + MODULE_JSON.getPackage());
+        let downloadPath = remoteURL + MODULE_JSON.getCommit() + "/" + MODULE_JSON.getPath();
+        console.log(LOGGER_HEARD() + "open download URL: " + downloadPath);
+        await MODULE_CHROME.open(downloadPath);
+        await MODULE_CHROME.wait(10000);
 
-    remoteURL = remoteURL + MODULE_JSON.getPackage();
-    console.log(LOGGER_HEARD + "download newest package: " + remoteURL);
-    await MODULE_TOOLS.download(remoteURL);
-    await MODULE_CHROME.wait(10000);
+        await graspName(MODULE_JSON.getSuffix());
+        console.log(LOGGER_HEARD() + "grasp newest package: " + MODULE_JSON.getPackage());
 
-    let path = PACKAGE_PATH + MODULE_JSON.getPath() + MODULE_JSON.getPackage();
-    let md5New = await MODULE_TOOLS.check(path);
-    console.log(LOGGER_HEARD + "newest md5 value: " + md5New);
-    console.log(LOGGER_HEARD + "old md5 value: " + MODULE_JSON.getMd5());
-
-    if (md5New == MODULE_JSON.getMd5()) {
-        await MODULE_JSON.writeFlag(false);
-    } else {
-        await MODULE_JSON.writeFlag(true);
-        await MODULE_JSON.writeMd5(md5New);
+        let downloadPackage = downloadPath + MODULE_JSON.getPackage();
+        console.log(LOGGER_HEARD() + "download newest package: " + downloadPackage);
+        await MODULE_TOOLS.download(downloadPackage);
+        await MODULE_CHROME.wait(10000);
     }
-    console.log(LOGGER_HEARD + "newest package: " + MODULE_JSON.getFlag());
 
     await MODULE_CHROME.close();
-    await MODULE_JSON.close();
 })().then(function() {
     console.log("Downloading newest package is completed!");
 }).catch(function(err) {
