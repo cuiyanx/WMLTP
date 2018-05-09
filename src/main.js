@@ -9,5 +9,5 @@ const childProcess = require("child_process");
 })().then(function() {
     console.log("Test completed!");
 }).catch(function(err) {
-    console.log("Error" + err);
+    console.log("Error: " + err);
 });

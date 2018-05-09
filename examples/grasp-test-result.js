@@ -181,5 +181,5 @@ var remoteURL = "http://brucedai.github.io/nt/test/index-local.html";
 })().then(function() {
     console.log("Grasping test result is completed!");
 }).catch(function(err) {
-    console.log("Error" + err);
+    console.log("Error: " + err);
 });
