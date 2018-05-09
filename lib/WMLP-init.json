@@ -1,6 +1,6 @@
 {
     "platform": [
-        "android"
+        "linux"
     ],
     "password": {
         "linux": "1qaz@WSX",

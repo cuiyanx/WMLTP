@@ -125,5 +125,5 @@ var remoteURL = "http://powerbuilder.sh.intel.com/public/webml/nightly/";
 })().then(function() {
     console.log("Downloading newest package is completed!");
 }).catch(function(err) {
-    console.log("Error" + err);
+    console.log("Error: " + err);
 });
