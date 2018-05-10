@@ -24,5 +24,5 @@ require("../lib/WMLP-init.js");
 })().then(function() {
     console.log("Installing package is completed!");
 }).catch(function(err) {
-    console.log("Error: " + err);
+    throw err;
 });
