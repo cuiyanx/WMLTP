@@ -1,10 +1,12 @@
 {
   "name": "wmlp",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "test tool for webml-polyfill",
-  "main": "./test/test-main.js",
+  "main": "./src/main.js",
   "directories": {
-    "test": "test"
+    "examples": "examples",
+    "lib": "lib",
+    "src": "src"
   },
   "dependencies": {
   },
