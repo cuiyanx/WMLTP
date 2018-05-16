@@ -7,7 +7,7 @@
         "mac": null,
         "windows": null
     },
-    "webmlpolyfill": true,
+    "webml": true,
     "commit": null,
     "downloadflag": true,
     "linux": {
