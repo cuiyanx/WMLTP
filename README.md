@@ -55,7 +55,7 @@ $ npm run testresult
 
 ****NOTE:**** for android, please installing newest package manually.
 
-## Set WMLP-init.json file
+## Set WMLP.config.json file
 
 * `platform`: test platforms(one or more)
 * `password`: supper user password for running platform

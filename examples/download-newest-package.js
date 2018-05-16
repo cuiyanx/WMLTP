@@ -24,7 +24,7 @@ var newestDate = {
 var currentNode = null;
 var currentCommit = null;
 var remoteURL = "http://powerbuilder.sh.intel.com/public/webml/nightly/";
-//var remoteURL = "http://10.126.1.201:8080/tmp/";
+var remoteURL = "http://10.126.1.201:8080/tmp/";
 
 (async function() {
     var graspCommit = async function() {
