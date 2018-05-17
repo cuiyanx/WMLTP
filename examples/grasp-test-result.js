@@ -113,6 +113,10 @@ var remoteURL = "http://brucedai.github.io/nt/test/index-local.html";
             let getPasses = message;
             console.log("    Web passes: " + getPasses);
             console.log("  Check passes: " + countPasses);
+
+            if (getPasses != countPasses) {
+                throw new Error("It's wrong to passed result!");
+            }
         });
 
         await MODULE_CHROME.driver.findElement(MODULE_CHROME.by.xpath("//ul[@id='mocha-stats']/li[@class='failures']//em")).getText()
@@ -120,6 +124,10 @@ var remoteURL = "http://brucedai.github.io/nt/test/index-local.html";
             let getFailures = message;
             console.log("  Web failures: " + getFailures);
             console.log("Check failures: " + countFailures);
+
+            if (getFailures != countFailures) {
+                throw new Error("It's wrong to failed result!");
+            }
         });
 
         await MODULE_CHROME.driver.findElement(MODULE_CHROME.by.xpath("//ul[@id='mocha-stats']/li[@class='duration']//em")).getText()

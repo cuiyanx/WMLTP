@@ -59,7 +59,9 @@ $ npm run testresult
 
 * `platform`: test platforms(one or more)
 * `password`: supper user password for running platform
-* `webmlpolyfill`: test web page using [webml-polyfill](https://github.com/intel/webml-polyfill)
+* `webml`: test web page using [webml-polyfill](https://github.com/intel/webml-polyfill)
+* `designated.flag`: flag of designated commit
+* `designated.commit`: designated commit
 * `path`: level-2 path
 * `suffix`: the suffix name of package
 * `others`: automatic setting

@@ -21,10 +21,11 @@ var newestDate = {
     day: 0
 };
 
+var useingCommit = null;
 var currentNode = null;
 var currentCommit = null;
 var remoteURL = "http://powerbuilder.sh.intel.com/public/webml/nightly/";
-var remoteURL = "http://10.126.1.201:8080/tmp/";
+//var remoteURL = "http://10.126.1.201:8080/tmp/";
 
 (async function() {
     var graspCommit = async function() {
@@ -68,12 +69,12 @@ var remoteURL = "http://10.126.1.201:8080/tmp/";
             .then(function(message) {
             currentCommit = message.split("/")[0];
 
-            if (currentCommit != MODULE_JSON.getCommit()) {
-                MODULE_JSON.writeCommit(currentCommit);
+            if (currentCommit != MODULE_JSON.getNewestCommit()) {
+                MODULE_JSON.writeNewestCommit(currentCommit);
             }
         });
 
-        console.log("    Newest commit: " + MODULE_JSON.getCommit());
+        console.log("    Newest commit: " + MODULE_JSON.getNewestCommit());
     }
 
     var graspName = async function(suffix) {
@@ -92,7 +93,7 @@ var remoteURL = "http://10.126.1.201:8080/tmp/";
             });
         }
 
-        console.log("    Newest package name: " + MODULE_JSON.getPackage());
+        console.log("    package name: " + MODULE_JSON.getPackage());
     }
 
     console.log(LOGGER_HEARD() + "open URL: " + remoteURL);
@@ -101,24 +102,47 @@ var remoteURL = "http://10.126.1.201:8080/tmp/";
     await MODULE_CHROME.open(remoteURL);
     await MODULE_CHROME.wait(10000);
 
-    await graspCommit();
-    console.log(LOGGER_HEARD() + "grasp newest commit: " + MODULE_JSON.getCommit());
+    if (FLAG_DESIGNATED_COMMIT) {
+        useingCommit = DESIGNATED_COMMIT;
+        console.log(LOGGER_HEARD() + "grasp designated commit: " + DESIGNATED_COMMIT);
+    } else {
+        await graspCommit();
+        useingCommit = MODULE_JSON.getNewestCommit();
+        console.log(LOGGER_HEARD() + "grasp newest commit: " + MODULE_JSON.getNewestCommit());
+    }
 
     for (let x in TARGET_PLATFORMS) {
         TEST_PLATFORM = TARGET_PLATFORMS[x];
 
-        let downloadPath = remoteURL + MODULE_JSON.getCommit() + "/" + MODULE_JSON.getPath();
+        let downloadPath = remoteURL + useingCommit + MODULE_JSON.getPath();
         console.log(LOGGER_HEARD() + "open download URL: " + downloadPath);
         await MODULE_CHROME.open(downloadPath);
         await MODULE_CHROME.wait(10000);
 
         await graspName(MODULE_JSON.getSuffix());
-        console.log(LOGGER_HEARD() + "grasp newest package: " + MODULE_JSON.getPackage());
+        console.log(LOGGER_HEARD() + "grasp package name: " + MODULE_JSON.getPackage());
 
-        let downloadPackage = downloadPath + MODULE_JSON.getPackage();
-        console.log(LOGGER_HEARD() + "download newest package: " + downloadPackage);
-        await MODULE_TOOLS.download(downloadPackage);
-        await MODULE_CHROME.wait(10000);
+        let result = await MODULE_TOOLS.checkCommit(useingCommit);
+        console.log(LOGGER_HEARD() + "check commit value: " + result);
+
+        if (result) {
+            result = await MODULE_TOOLS.checkPackage(useingCommit);
+            console.log(LOGGER_HEARD() + "check package state: " + result);
+
+            if (result) {
+                console.log(LOGGER_HEARD() + "no need to download package!");
+            } else {
+                let downloadPackage = downloadPath + MODULE_JSON.getPackage();
+                console.log(LOGGER_HEARD() + "download package: " + downloadPackage);
+                await MODULE_TOOLS.download(downloadPackage);
+                await MODULE_CHROME.wait(10000);
+            }
+        } else {
+            let downloadPackage = downloadPath + MODULE_JSON.getPackage();
+            console.log(LOGGER_HEARD() + "download package: " + downloadPackage);
+            await MODULE_TOOLS.download(downloadPackage);
+            await MODULE_CHROME.wait(10000);
+        }
     }
 
     await MODULE_CHROME.close();
