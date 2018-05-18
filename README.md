@@ -53,8 +53,6 @@ $ npm run installpackage
 $ npm run testresult
 ```
 
-****NOTE:**** for android, please installing newest package manually.
-
 ## Set WMLP.config.json file
 
 * `platform`: test platforms(one or more)
