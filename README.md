@@ -56,11 +56,26 @@ $ npm run testresult
 ## Set WMLP.config.json file
 
 * `platform`: test platforms(one or more)
+
+    ```
+    {"mac"}
+    {"linux", "android"}
+    ```
+
 * `password`: supper user password for running platform
 * `webml`: test web page using [webml-polyfill](https://github.com/intel/webml-polyfill)
 * `designated.flag`: flag of designated commit
 * `designated.commit`: designated commit
-* `path`: level-2 path
+* `serialnumber`: android devices serial number
+* `path`: level-2 path(if android devices, need serialnumber-to-path match)
+
+    ```
+    "android": {
+        "serialnumber": ["9bd88b70", "9bd88b71"],
+        "path": ["/android_arm_SUCCEED/", "/android_x64_SUCCEED/"]
+    }
+    ```
+
 * `suffix`: the suffix name of package
 * `others`: automatic setting
 

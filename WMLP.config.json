@@ -1,5 +1,6 @@
 {
     "platform": [
+        "android",
         "linux"
     ],
     "password": {
@@ -33,7 +34,12 @@
     },
     "android": {
         "package": null,
-        "path": "/android_arm_SUCCEED/",
+        "serialnumber": [
+            "9bd88b70"
+        ],
+        "path": [
+            "/android_arm_SUCCEED/"
+        ],
         "suffix": "apk",
         "md5": null
     },

@@ -25,7 +25,7 @@ var useingCommit = null;
 var currentNode = null;
 var currentCommit = null;
 var remoteURL = "http://powerbuilder.sh.intel.com/public/webml/nightly/";
-//var remoteURL = "http://10.126.1.201:8080/tmp/";
+//var remoteURL = "http://10.126.1.210:8080/tmp/";
 
 (async function() {
     var graspCommit = async function() {
@@ -96,6 +96,42 @@ var remoteURL = "http://powerbuilder.sh.intel.com/public/webml/nightly/";
         console.log("    package name: " + MODULE_JSON.getPackage());
     }
 
+    var downloadPackage = async function(commit) {
+        let downloadPath = remoteURL + commit + MODULE_JSON.getPath();
+        console.log(LOGGER_HEARD() + "open download URL: " + downloadPath);
+        await MODULE_CHROME.open(downloadPath);
+        await MODULE_CHROME.wait(10000);
+
+        await graspName(MODULE_JSON.getSuffix());
+        console.log(LOGGER_HEARD() + "grasp package name: " + MODULE_JSON.getPackage());
+
+        let resultCommit = await MODULE_TOOLS.checkCommit();
+        console.log(LOGGER_HEARD() + "check commit value: " + resultCommit);
+
+        let downloadFlag = false;
+        if (resultCommit) {
+            let packagePath = GET_PACKAGE_PATH() + MODULE_JSON.getPath() + MODULE_JSON.getPackage();
+            let resultPackage = await MODULE_TOOLS.checkPackage(packagePath);
+            console.log(LOGGER_HEARD() + "check package state: " + resultPackage);
+
+            if (resultPackage) {
+                downloadFlag = false;
+                console.log(LOGGER_HEARD() + "no need to download package!");
+            } else {
+                downloadFlag = true;
+            }
+        } else {
+            downloadFlag = true;
+        }
+
+        if (downloadFlag) {
+            let downloadPackagePath = downloadPath + MODULE_JSON.getPackage();
+            console.log(LOGGER_HEARD() + "download package: " + downloadPackagePath);
+            await MODULE_TOOLS.download(downloadPackagePath);
+            await MODULE_CHROME.wait(10000);
+        }
+    }
+
     console.log(LOGGER_HEARD() + "open URL: " + remoteURL);
     await MODULE_CHROME.setBrowserNewest(false);
     await MODULE_CHROME.create();
@@ -114,34 +150,14 @@ var remoteURL = "http://powerbuilder.sh.intel.com/public/webml/nightly/";
     for (let x in TARGET_PLATFORMS) {
         TEST_PLATFORM = TARGET_PLATFORMS[x];
 
-        let downloadPath = remoteURL + useingCommit + MODULE_JSON.getPath();
-        console.log(LOGGER_HEARD() + "open download URL: " + downloadPath);
-        await MODULE_CHROME.open(downloadPath);
-        await MODULE_CHROME.wait(10000);
+        if (TEST_PLATFORM == "android") {
+            for (let y in SERIAL_NUMBERS) {
+                ANDROID_SN = SERIAL_NUMBERS[y];
 
-        await graspName(MODULE_JSON.getSuffix());
-        console.log(LOGGER_HEARD() + "grasp package name: " + MODULE_JSON.getPackage());
-
-        let result = await MODULE_TOOLS.checkCommit(useingCommit);
-        console.log(LOGGER_HEARD() + "check commit value: " + result);
-
-        if (result) {
-            result = await MODULE_TOOLS.checkPackage(useingCommit);
-            console.log(LOGGER_HEARD() + "check package state: " + result);
-
-            if (result) {
-                console.log(LOGGER_HEARD() + "no need to download package!");
-            } else {
-                let downloadPackage = downloadPath + MODULE_JSON.getPackage();
-                console.log(LOGGER_HEARD() + "download package: " + downloadPackage);
-                await MODULE_TOOLS.download(downloadPackage);
-                await MODULE_CHROME.wait(10000);
+                await downloadPackage(useingCommit);
             }
         } else {
-            let downloadPackage = downloadPath + MODULE_JSON.getPackage();
-            console.log(LOGGER_HEARD() + "download package: " + downloadPackage);
-            await MODULE_TOOLS.download(downloadPackage);
-            await MODULE_CHROME.wait(10000);
+            await downloadPackage(useingCommit);
         }
     }
 

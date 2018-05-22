@@ -167,9 +167,7 @@ var remoteURL = "http://brucedai.github.io/nt/test/index-local.html";
         await check();
     }
 
-    for (let x in TARGET_PLATFORMS) {
-        TEST_PLATFORM = TARGET_PLATFORMS[x];
-
+    var testResult = async function() {
         console.log(LOGGER_HEARD() + "open csv file");
         await MODULE_CSV.open();
 
@@ -185,6 +183,20 @@ var remoteURL = "http://brucedai.github.io/nt/test/index-local.html";
         console.log(LOGGER_HEARD() + "finish grasping test result");
         await MODULE_CSV.close();
         await MODULE_CHROME.close();
+    }
+
+    for (let x in TARGET_PLATFORMS) {
+        TEST_PLATFORM = TARGET_PLATFORMS[x];
+
+        if (TEST_PLATFORM == "android") {
+            for (let y in SERIAL_NUMBERS) {
+                ANDROID_SN = SERIAL_NUMBERS[y];
+
+                await testResult();
+            }
+        } else {
+            await testResult();
+        }
     }
 })().then(function() {
     console.log("Grasping test result is completed!");
