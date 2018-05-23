@@ -1,6 +1,5 @@
 {
     "platform": [
-        "android",
         "linux"
     ],
     "password": {

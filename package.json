@@ -1,5 +1,5 @@
 {
-  "name": "wmlp",
+  "name": "wmltp",
   "version": "0.2.0",
   "description": "test tool for webml-polyfill",
   "main": "./src/main.js",
@@ -22,12 +22,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cuiyanx/WMLP.git"
+    "url": "git+https://github.com/cuiyanx/WMLTP.git"
   },
   "author": "yanx.cui@intel.com",
   "license": "Apache 2.0",
   "bugs": {
-    "url": "https://github.com/cuiyanx/WMLP/issues"
+    "url": "https://github.com/cuiyanx/WMLTP/issues"
   },
-  "homepage": "https://github.com/cuiyanx/WMLP#readme"
+  "homepage": "https://github.com/cuiyanx/WMLTP#readme"
 }

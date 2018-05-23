@@ -1,4 +1,4 @@
-require("../lib/WMLP-init.js");
+require("../lib/WMLTP-init.js");
 
 (async function() {
     var installPackage = async function() {

@@ -1,4 +1,4 @@
-require("../lib/WMLP-init.js");
+require("../lib/WMLTP-init.js");
 
 MODULE_CSV.header = [
     "Feature",
