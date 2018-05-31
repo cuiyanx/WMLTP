@@ -6,7 +6,7 @@ MODULE_CSV.header = [
     "TestCase",
     "Pass",
     "Fail",
-    "N/A",
+    "NA",
     "Measured",
     "Comment",
     "MeasuredName",
@@ -20,11 +20,15 @@ MODULE_CSV.header = [
 
 var countPasses = 0;
 var countFailures = 0;
+var countPending = 0;
+var flagPending = null;
+
 var csvTitle = null;
 var csvModule = null;
 var csvName = null;
 var csvPass = null;
 var csvFail = null;
+var csvNA = null;
 var csvExecution = "auto";
 var csvSuite = "tests";
 
@@ -53,7 +57,11 @@ if (WEBML_SWITCH === false) {
             });
         }
 
-        return Text.slice(0, length);
+        if (flagPending) {
+            return Text;
+        } else {
+            return Text.slice(0, length);
+        }
     }
 
     var getError = async function(element) {
@@ -69,28 +77,46 @@ if (WEBML_SWITCH === false) {
     }
 
     var getInfo = async function(element) {
-        let arrayTitles, arrayModule;
-        let array = await element.findElements(MODULE_CHROME.by.xpath("./ul/li[@class='test pass fast' or @class='test pass slow' or @class='test fail']"));
+        let array = await element.findElements(MODULE_CHROME.by.xpath("./ul/li[@class='test pass fast' or @class='test pass slow' or @class='test fail' or @class='test pass pending']"));
 
         for (let i = 1; i <= array.length; i++) {
+            await array[i - 1].getAttribute("class")
+                .then(function(message) {
+                if (message == "test pass pending") {
+                    flagPending = true;
+                } else {
+                    flagPending = false;
+                }
+            });
+
             await getName(array[i - 1])
                 .then(function(message) {
                 csvName = message;
                 console.log("       " + i + ") " + message);
             });
 
-            await getError(array[i - 1])
-                .then(function(message) {
+            if (flagPending) {
                 csvPass = null;
-                csvFail = "1";
-                countFailures++;
-                console.log("           Test failed!");
-            }).catch(function(error) {
-                csvPass = "1";
                 csvFail = null;
-                countPasses++;
-                console.log("           Test passed!");
-            });
+                csvNA = "1";
+                countPending++;
+                console.log("           Test pass pending!");
+            } else {
+                await getError(array[i - 1])
+                    .then(function(message) {
+                    csvPass = null;
+                    csvFail = "1";
+                    csvNA = null;
+                    countFailures++;
+                    console.log("           Test failed!");
+                }).catch(function(error) {
+                    csvPass = "1";
+                    csvFail = null;
+                    csvNA = null;
+                    countPasses++;
+                    console.log("           Test passed!");
+                });
+            }
 
             if (csvModule == null) {
                 csvModule = csvTitle;
@@ -102,6 +128,7 @@ if (WEBML_SWITCH === false) {
                 TestCase: csvName,
                 Pass : csvPass,
                 Fail: csvFail,
+                NA: csvNA,
                 ExecutionType: csvExecution,
                 SuiteName: csvSuite
             };
@@ -110,6 +137,7 @@ if (WEBML_SWITCH === false) {
             csvName = null;
             csvPass = null;
             csvFail = null;
+            csvNA = null;
         }
     }
 
@@ -135,6 +163,9 @@ if (WEBML_SWITCH === false) {
                 throw new Error("It's wrong to failed result!");
             }
         });
+
+        console.log("       Pending: " + countPending);
+        console.log("         TOTAL: " + (countPasses + countFailures + countPending));
 
         await MODULE_CHROME.driver.findElement(MODULE_CHROME.by.xpath("//ul[@id='mocha-stats']/li[@class='duration']//em")).getText()
             .then(function(message) {
