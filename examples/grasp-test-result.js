@@ -27,7 +27,13 @@ var csvPass = null;
 var csvFail = null;
 var csvExecution = "auto";
 var csvSuite = "tests";
-var remoteURL = "http://brucedai.github.io/nt/test/index-local.html";
+
+var remoteURL;
+if (WEBML_SWITCH === false) {
+    remoteURL = "http://brucedai.github.io/nt/test/index-local.html" + "?backend=" + WEBML_BACKEND;
+} else {
+    remoteURL = "http://brucedai.github.io/nt/test/index-local.html";
+}
 
 (async function() {
     var getName = async function(element) {

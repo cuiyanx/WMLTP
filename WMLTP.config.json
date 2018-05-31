@@ -7,7 +7,10 @@
         "mac": null,
         "windows": null
     },
-    "webml": true,
+    "webml": {
+        "flag": false,
+        "backend": "webgl2"
+    },
     "designated": {
         "flag": false,
         "commit": "3d99cdd"
