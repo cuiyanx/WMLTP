@@ -1,23 +1,5 @@
 require("../lib/WMLTP-init.js");
 
-MODULE_CSV.header = [
-    "Feature",
-    "CaseId",
-    "TestCase",
-    "Pass",
-    "Fail",
-    "NA",
-    "Measured",
-    "Comment",
-    "MeasuredName",
-    "Value",
-    "Unit",
-    "Target",
-    "Failure",
-    "ExecutionType",
-    "SuiteName"
-];
-
 var countPasses = 0;
 var countFailures = 0;
 var countPending = 0;
