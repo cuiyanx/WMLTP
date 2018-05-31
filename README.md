@@ -63,9 +63,10 @@ $ npm run testresult
     ```
 
 * `password`: supper user password for running platform
-* `webml`: test web page using [webml-polyfill](https://github.com/intel/webml-polyfill)
+* `webml.flag`: test web page using [webml-polyfill](https://github.com/intel/webml-polyfill)
+* `webml.backend`: if `webml.flag` as *false*, set backend of test web page as "webgl2" or "wasm"
 * `designated.flag`: flag of designated commit
-* `designated.commit`: designated commit
+* `designated.commit`: if `designated.flag` as *true*, set designated commit
 * `serialnumber`: android devices serial number
 * `path`: level-2 path(if android devices, need serialnumber-to-path match)
 
