@@ -59,7 +59,7 @@ if (WEBML_SWITCH === false) {
     }
 
     var getInfo = async function(element) {
-        let array = await element.findElements(MODULE_CHROME.by.xpath("./ul/li[@class='test pass fast' or @class='test pass slow' or @class='test fail' or @class='test pass pending']"));
+        let array = await element.findElements(MODULE_CHROME.by.xpath("./ul/li[@class='test pass fast' or @class='test pass slow' or @class='test fail' or @class='test pass pending' or @class='test pass medium']"));
 
         for (let i = 1; i <= array.length; i++) {
             await array[i - 1].getAttribute("class")
