@@ -1,9 +1,9 @@
 require("../lib/WMLTP-init.js");
+const path = require("path");
 
 (async function() {
     var installPackage = async function() {
-        let localPath = GET_PACKAGE_PATH() + MODULE_JSON.getPath() + MODULE_JSON.getPackage();
-
+        let localPath = path.join(GET_CHROMIUM_PATH(), MODULE_JSON.getPath(), MODULE_JSON.getPackage());
         let resultInstalled = await MODULE_TOOLS.checkInstalled();
         console.log(LOGGER_HEARD() + "check package has installed: " + resultInstalled);
 
@@ -31,16 +31,7 @@ require("../lib/WMLTP-init.js");
 
     for (let x in TARGET_PLATFORMS) {
         TEST_PLATFORM = TARGET_PLATFORMS[x];
-
-        if (TEST_PLATFORM == "android") {
-            for (let y in SERIAL_NUMBERS) {
-                ANDROID_SN = SERIAL_NUMBERS[y];
-
-                await installPackage();
-            }
-        } else {
-            await installPackage();
-        }
+        await installPackage();
     }
 })().then(function() {
     console.log("Installing package is completed!");

@@ -1,52 +1,49 @@
 {
+    "nightlyBuildURL": "http://powerbuilder.sh.intel.com/public/webml/nightly/",
+    "testCaseURL": "https://brucedai.github.io/webnnt/test/index-local.html",
     "platform": [
         "linux"
     ],
     "password": {
-        "linux": "1qaz@WSX",
+        "linux": "1",
         "mac": null,
         "windows": null
     },
     "webml": {
-        "flag": false,
-        "backend": "webgl2"
+        "supportSwitch": false,
+        "prefer": "Linux-WebNN-Fast-MKLDNN"
     },
     "designated": {
         "flag": false,
-        "commit": "3d99cdd"
+        "commit": "8d111d1"
     },
-    "newestcommit": null,
+    "newestcommit": "b7ce158/",
     "linux": {
-        "package": null,
-        "path": "/linux_x64_SUCCEED/",
+        "chromiumBuild": "chromium-browser-unstable_75.0.3739.0-1_amd64.deb",
+        "path": "linux_x64_SUCCEED",
         "suffix": "deb",
-        "md5": null
+        "md5": "9ff57f302ff2fd0eb99c2f37ba77592f"
     },
     "mac": {
-        "package": null,
-        "path": "/mac_x64_SUCCEED/",
+        "chromiumBuild": "chromium-mac.zip",
+        "path": "mac_x64_SUCCEED",
         "suffix": "zip",
         "md5": null
     },
     "windows": {
-        "package": null,
-        "path": null,
-        "suffix": null,
-        "md5": null
+        "chromiumBuild": "chrome-win32.zip",
+        "path": "win_x64_SUCCEED",
+        "suffix": "zip",
+        "md5": "9b4159d4040e70a9b20844e50cdb6e2e"
     },
     "android": {
-        "package": null,
-        "serialnumber": [
-            "9bd88b70"
-        ],
-        "path": [
-            "/android_arm_SUCCEED/"
-        ],
+        "chromiumBuild": "ChromePublic.apk",
+        "path": "android_arm_SUCCEED",
         "suffix": "apk",
-        "md5": null
+        "md5": "63bf1cd160b0432eb61fd47ecaaa890c"
     },
     "ios": {
-        "package": null,
+        "chromiumBuild": null,
         "path": null,
         "suffix": null,
         "md5": null

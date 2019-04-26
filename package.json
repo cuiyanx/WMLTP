@@ -9,10 +9,13 @@
     "src": "src"
   },
   "dependencies": {
+    "moment": "^2.22.2",
+    "unzip": "^0.1.11"
   },
   "devDependencies": {
     "fast-csv": "^2.4.1",
-    "selenium-webdriver": "^4.0.0-alpha.1"
+    "selenium-webdriver": "^4.0.0-alpha.1",
+    "cheerio": "*"
   },
   "scripts": {
     "start": "node ./src/main.js",
@@ -22,12 +25,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cuiyanx/WMLTP.git"
+    "url": "git+https://github.com/01org/web-test-suite/tree/master/tool/WMLTP.git"
   },
   "author": "yanx.cui@intel.com",
   "license": "Apache 2.0",
   "bugs": {
-    "url": "https://github.com/cuiyanx/WMLTP/issues"
+    "url": "https://github.com/01org/web-test-suite/tree/master/tool/WMLTP/issues"
   },
-  "homepage": "https://github.com/cuiyanx/WMLTP#readme"
+  "homepage": "https://github.com/01org/web-test-suite/tree/master/tool/WMLTP#readme"
 }
