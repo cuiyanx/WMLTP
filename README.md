@@ -4,22 +4,6 @@ The WMLTP(Web Machine Learning Test Platform) is a nightly automation test frame
 Now, we support Linux(Ubuntu 16.04), android device, and Mac, and Windows.
 Next, we will support IOS.
 
-## Prerequisites
-* Running WMLP with Google Chromium, need [chromedriver](http://chromedriver.storage.googleapis.com/index.html).
-
-* Add *chromedriver* to systerm path.
-   + For linux:
-
-      ```sh
-      export PATH=<yourPath>:$PATH
-      ```
-
-   + For mac: copy *chromedriver* to `/usr/local/bin/`
-
-   + For Window: download corresponding *chromedriver.exe* and export to system path.
-
-* If running WMLTP on android device(>= 8.0), need *adb server*.
-
 ## Install
 
 ```sh

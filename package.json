@@ -14,6 +14,7 @@
   },
   "devDependencies": {
     "fast-csv": "^2.4.1",
+    "chromedriver": "^2.41.0",
     "selenium-webdriver": "^4.0.0-alpha.1",
     "cheerio": "*"
   },
@@ -25,12 +26,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/01org/web-test-suite/tree/master/tool/WMLTP.git"
+    "url": "git+https://github.com/cuiyanx/WMLTP.git"
   },
   "author": "yanx.cui@intel.com",
   "license": "Apache 2.0",
   "bugs": {
-    "url": "https://github.com/01org/web-test-suite/tree/master/tool/WMLTP/issues"
+    "url": "https://github.com/cuiyanx/WMLTP/issues"
   },
-  "homepage": "https://github.com/01org/web-test-suite/tree/master/tool/WMLTP#readme"
+  "homepage": "https://github.com/cuiyanx/WMLTP#readme"
 }

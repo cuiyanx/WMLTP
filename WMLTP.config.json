@@ -2,7 +2,7 @@
     "nightlyBuildURL": "http://powerbuilder.sh.intel.com/public/webml/nightly/",
     "testCaseURL": "https://brucedai.github.io/webnnt/test/index-local.html",
     "platform": [
-        "linux"
+        "android"
     ],
     "password": {
         "linux": "1",
@@ -11,7 +11,7 @@
     },
     "webml": {
         "supportSwitch": false,
-        "prefer": "Linux-WebNN-Fast-MKLDNN"
+        "prefer": "Android-Polyfill-Fast-WASM"
     },
     "designated": {
         "flag": false,

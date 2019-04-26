@@ -258,6 +258,7 @@ const os = require("os");
     for (let platform of TARGET_PLATFORMS) {
         TEST_PLATFORM = platform;
         let preferArray = GET_PREFER_MODELS();
+        CHECK_RUN_ENV();
 
         if (preferArray.length == 0) {
             await MODULE_TOOLS.uninstallChromium();
