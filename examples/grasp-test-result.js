@@ -258,6 +258,8 @@ const os = require("os");
     for (let platform of TARGET_PLATFORMS) {
         TEST_PLATFORM = platform;
         let preferArray = GET_PREFER_MODELS();
+        console.log(LOGGER_HEARD() + "prefer: " + preferArray);
+
         CHECK_RUN_ENV();
 
         if (preferArray.length == 0) {
