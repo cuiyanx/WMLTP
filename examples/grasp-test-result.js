@@ -39,6 +39,50 @@ const os = require("os");
     }
 
     var grasp = async function() {
+/**
+ * pageData = {
+ *     "titleNumber1": {
+ *         "titleName": titleName,
+ *         "moduleNumber1": {
+ *             "moduleName": moduleName1,
+ *             "caseNumber1": {
+ *                 "caseName": caseName,
+ *                 "Pass": value,
+ *                 "Fail": value
+ *             }
+ *         },
+ *         "moduleNumber2": {
+ *             "moduleName": moduleName2,
+ *             "caseNumber1": {
+ *                 "caseName": caseName,
+ *                 "Pass": value,
+ *                 "Fail": value
+ *             },
+ *             "caseNumber2": {
+ *                 "caseName": caseName,
+ *                 "Pass": value,
+ *                 "Fail": value
+ *             }
+ *         }
+ *     },
+ *     "titleNumber2": {
+ *         "titleName": titleName,
+ *         "moduleNumber1": {
+ *             "moduleName": moduleName1,
+ *             "caseNumber1": {
+ *                 "caseName": caseName,
+ *                 "Pass": value,
+ *                 "Fail": value
+ *             },
+ *             "caseNumber2": {
+ *                 "caseName": caseName,
+ *                 "Pass": value,
+ *                 "Fail": value
+ *             }
+ *         }
+ *     }
+ * }
+ */
         let pageData = new Map();
         let graspTotal, graspPass, graspFail;
         let actions = 0;
@@ -60,17 +104,22 @@ const os = require("os");
 
         await MODULE_CHROME.driver.findElements(MODULE_CHROME.by.xpath("//ul[@id='mocha-report']/li[@class='suite']"))
         .then(function(titleElements) {
-            for (let titleElement of titleElements) {
-                titleElement.findElement(MODULE_CHROME.by.xpath("./h1/a")).getAttribute("textContent")
-                .then(function(titleName) {
-                    pageData.set(titleName, new Map());
+            for (let y in titleElements) {
+                let titleNumber = (parseInt(y) + 1).toString();
+                pageData.set(titleNumber, new Map());
 
-                    titleElement.findElements(MODULE_CHROME.by.xpath("./ul/li[@class='suite']"))
+                titleElements[y].findElement(MODULE_CHROME.by.xpath("./h1/a")).getAttribute("textContent")
+                .then(function(titleName) {
+                    pageData.get(titleNumber).set("titleName", titleName);
+
+                    titleElements[y].findElements(MODULE_CHROME.by.xpath("./ul/li[@class='suite']"))
                     .then(function(moduleElements) {
                         if (moduleElements.length === 0) {
-                            pageData.get(titleName).set(titleName, new Map());
+                            let moduleNumber = "0";
+                            pageData.get(titleNumber).set(moduleNumber, new Map());
+                            pageData.get(titleNumber).get(moduleNumber).set("moduleName", titleName);
 
-                            titleElement.findElements(MODULE_CHROME.by.xpath(
+                            titleElements[y].findElements(MODULE_CHROME.by.xpath(
                                 "./ul/li[@class='test pass fast' or " +
                                 "@class='test pass slow' or " +
                                 "@class='test fail' or " +
@@ -79,20 +128,20 @@ const os = require("os");
                             .then(async function(caseElements) {
                                 for (let x in caseElements) {
                                     let caseNumber = (parseInt(x) + 1).toString();
-                                    pageData.get(titleName).get(titleName).set(caseNumber, new Map());
+                                    pageData.get(titleNumber).get(moduleNumber).set(caseNumber, new Map());
 
                                     let caseName = await getCaseName(caseElements[x]);
-                                    pageData.get(titleName).get(titleName).get(caseNumber).set("TestCase", caseName);
+                                    pageData.get(titleNumber).get(moduleNumber).get(caseNumber).set("caseName", caseName);
 
                                     let caseStatus = await getCaseStatus(caseElements[x]);
                                     if (caseStatus == "Pass") {
                                         countPasses = countPasses + 1;
-                                        pageData.get(titleName).get(titleName).get(caseNumber).set("Pass", 1);
-                                        pageData.get(titleName).get(titleName).get(caseNumber).set("Fail", null);
+                                        pageData.get(titleNumber).get(moduleNumber).get(caseNumber).set("Pass", 1);
+                                        pageData.get(titleNumber).get(moduleNumber).get(caseNumber).set("Fail", null);
                                     } else {
                                         countFailures = countFailures + 1;
-                                        pageData.get(titleName).get(titleName).get(caseNumber).set("Pass", null);
-                                        pageData.get(titleName).get(titleName).get(caseNumber).set("Fail", 1);
+                                        pageData.get(titleNumber).get(moduleNumber).get(caseNumber).set("Pass", null);
+                                        pageData.get(titleNumber).get(moduleNumber).get(caseNumber).set("Fail", 1);
                                     }
 
                                     actions = actions + 1;
@@ -101,13 +150,16 @@ const os = require("os");
                                 }
                             });
                         } else {
-                            for (let moduleElement of moduleElements) {
-                                moduleElement.findElement(MODULE_CHROME.by.xpath("./h1/a")).getAttribute("textContent")
+                            for (let k in moduleElements) {
+                                let moduleNumber = (parseInt(k) + 1).toString();
+                                pageData.get(titleNumber).set(moduleNumber, new Map());
+
+                                moduleElements[k].findElement(MODULE_CHROME.by.xpath("./h1/a")).getAttribute("textContent")
                                 .then(function(moduleName) {
                                     moduleName = moduleName.split("#")[1];
-                                    pageData.get(titleName).set(moduleName, new Map());
+                                    pageData.get(titleNumber).get(moduleNumber).set("moduleName", moduleName);
 
-                                    moduleElement.findElements(MODULE_CHROME.by.xpath(
+                                    moduleElements[k].findElements(MODULE_CHROME.by.xpath(
                                         "./ul/li[@class='test pass fast' or " +
                                         "@class='test pass slow' or " +
                                         "@class='test fail' or " +
@@ -116,20 +168,20 @@ const os = require("os");
                                     .then(async function(caseElements) {
                                         for (let x in caseElements) {
                                             let caseNumber = (parseInt(x) + 1).toString();
-                                            pageData.get(titleName).get(moduleName).set(caseNumber, new Map());
+                                            pageData.get(titleNumber).get(moduleNumber).set(caseNumber, new Map());
 
                                             let caseName = await getCaseName(caseElements[x]);
-                                            pageData.get(titleName).get(moduleName).get(caseNumber).set("TestCase", caseName);
+                                            pageData.get(titleNumber).get(moduleNumber).get(caseNumber).set("caseName", caseName);
 
                                             let caseStatus = await getCaseStatus(caseElements[x]);
                                             if (caseStatus == "Pass") {
                                                 countPasses = countPasses + 1;
-                                                pageData.get(titleName).get(moduleName).get(caseNumber).set("Pass", 1);
-                                                pageData.get(titleName).get(moduleName).get(caseNumber).set("Fail", null);
+                                                pageData.get(titleNumber).get(moduleNumber).get(caseNumber).set("Pass", 1);
+                                                pageData.get(titleNumber).get(moduleNumber).get(caseNumber).set("Fail", null);
                                             } else {
                                                 countFailures = countFailures + 1;
-                                                pageData.get(titleName).get(moduleName).get(caseNumber).set("Pass", null);
-                                                pageData.get(titleName).get(moduleName).get(caseNumber).set("Fail", 1);
+                                                pageData.get(titleNumber).get(moduleNumber).get(caseNumber).set("Pass", null);
+                                                pageData.get(titleNumber).get(moduleNumber).get(caseNumber).set("Fail", 1);
                                             }
 
                                             actions = actions + 1;
@@ -148,6 +200,7 @@ const os = require("os");
         await MODULE_CHROME.check(function() {
             if (actionCount != actions) {
                 actionCount = actions;
+                console.log("\033[1A\033[50D\033[K    grasping: " + actionCount + "/" + graspTotal);
             }
 
             return (actions == graspTotal);
@@ -173,22 +226,52 @@ const os = require("os");
         console.log("  Web failures: " + graspFail);
         console.log("Check failures: " + countFailures);
         console.log("         TOTAL: " + graspTotal);
+/*
+        for (let key1 of pageData.keys()) {
+            console.log(key1 + ":");
+            for (let key2 of pageData.get(key1).keys()) {
+                if (key2 == "titleName") {
+                    console.log("   " + key2 + ": " + pageData.get(key1).get(key2));
+                } else {
+                    console.log("   " + key2 + ":");
+                    for (let key3 of pageData.get(key1).get(key2).keys()) {
+                        if (key3 == "moduleName") {
+                            console.log("       " + key3 + ": " + pageData.get(key1).get(key2).get(key3));
+                        } else {
+                            console.log("       " + key3 + ":");
+                            for (let key4 of pageData.get(key1).get(key2).get(key3).keys()) {
+                                console.log("           " + key4 + ": " + pageData.get(key1).get(key2).get(key3).get(key4));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+*/
+        let titleName, moduleName;
+        for (let titleNumber of pageData.keys()) {
+            for (let moduleNumber of pageData.get(titleNumber).keys()) {
+                if (moduleNumber == "titleName") {
+                    titleName = pageData.get(titleNumber).get(moduleNumber);
+                } else {
+                    for (let caseNumber of pageData.get(titleNumber).get(moduleNumber).keys()) {
+                        if (caseNumber == "moduleName") {
+                            moduleName = pageData.get(titleNumber).get(moduleNumber).get(caseNumber);
+                        } else {
+                            let DataFormat = {
+                                Feature: titleName,
+                                CaseId: moduleName + "/" + caseNumber,
+                                TestCase: pageData.get(titleNumber).get(moduleNumber).get(caseNumber).get("caseName"),
+                                Pass : pageData.get(titleNumber).get(moduleNumber).get(caseNumber).get("Pass"),
+                                Fail: pageData.get(titleNumber).get(moduleNumber).get(caseNumber).get("Fail"),
+                                NA: null,
+                                ExecutionType: "auto",
+                                SuiteName: "tests"
+                            };
 
-        for (let titleName of pageData.keys()) {
-            for (let moduleName of pageData.get(titleName).keys()) {
-                for (let caseNumber of pageData.get(titleName).get(moduleName).keys()) {
-                    let DataFormat = {
-                        Feature: titleName,
-                        CaseId: moduleName + "/" + caseNumber,
-                        TestCase: pageData.get(titleName).get(moduleName).get(caseNumber).get("TestCase"),
-                        Pass : pageData.get(titleName).get(moduleName).get(caseNumber).get("Pass"),
-                        Fail: pageData.get(titleName).get(moduleName).get(caseNumber).get("Fail"),
-                        NA: null,
-                        ExecutionType: "auto",
-                        SuiteName: "tests"
-                    };
-
-                    await MODULE_CSV.write(DataFormat);
+                            await MODULE_CSV.write(DataFormat);
+                        }
+                    }
                 }
             }
         }
@@ -247,7 +330,7 @@ const os = require("os");
             }
         });
 
-        console.log(LOGGER_HEARD() + "grasping test case....");
+        console.log(LOGGER_HEARD() + "grasping test case....\n");
         await grasp();
 
         console.log(LOGGER_HEARD() + "finish grasping test result with '" + prefer + "'");

@@ -10,9 +10,9 @@
         "windows": null
     },
     "webml": {
-        "IEMYRIAD": true,
+        "IEMYRIAD": false,
         "supportSwitch": false,
-        "prefer": "all"
+        "prefer": "Linux-Polyfill-Sustained-WebGL"
     },
     "designated": {
         "flag": false,
