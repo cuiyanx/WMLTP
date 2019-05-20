@@ -35,7 +35,7 @@ const os = require("os");
             });
         }
 
-        return Text.slice(0, length);
+        return Text.slice(0, length).trim();
     }
 
     var grasp = async function() {
