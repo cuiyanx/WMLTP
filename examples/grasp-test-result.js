@@ -1,282 +1,9 @@
 require("../lib/WMLTP-init.js");
+const cheerio = require("cheerio");
 const fs = require("fs");
 const os = require("os");
 
 (async function() {
-    var getCaseStatus = async function(element) {
-        return element.getAttribute("class").then(function(message) {
-            let graspCaseStatus = null;
-            if (message == "test pass pending") {
-                graspCaseStatus = "N/A";
-            } else if (message == "test pass fast" || message == "test pass slow" || message == "test pass medium") {
-                graspCaseStatus = "Pass";
-            } else if (message == "test fail") {
-                graspCaseStatus = "Fail";
-            } else {
-                throw new Error("not support case status");
-            }
-
-            return graspCaseStatus;
-        });
-    }
-
-    var getCaseName = async function(element) {
-        let Text = null;
-        let length = 0;
-        await element.findElement(MODULE_CHROME.by.xpath("./h2")).getText().then(function(message) {
-            length = message.length - 1;
-            Text = message;
-        });
-
-        let arrayElement = await element.findElements(MODULE_CHROME.by.xpath("./h2/child::*"));
-        for (let j = 1; j <= arrayElement.length; j++) {
-            await arrayElement[j - 1].getText().then(function(message) {
-                length = length - message.length;
-            });
-        }
-
-        return Text.slice(0, length).trim();
-    }
-
-    var grasp = async function() {
-/**
- * pageData = {
- *     "titleNumber1": {
- *         "titleName": titleName,
- *         "moduleNumber1": {
- *             "moduleName": moduleName1,
- *             "caseNumber1": {
- *                 "caseName": caseName,
- *                 "Pass": value,
- *                 "Fail": value
- *             }
- *         },
- *         "moduleNumber2": {
- *             "moduleName": moduleName2,
- *             "caseNumber1": {
- *                 "caseName": caseName,
- *                 "Pass": value,
- *                 "Fail": value
- *             },
- *             "caseNumber2": {
- *                 "caseName": caseName,
- *                 "Pass": value,
- *                 "Fail": value
- *             }
- *         }
- *     },
- *     "titleNumber2": {
- *         "titleName": titleName,
- *         "moduleNumber1": {
- *             "moduleName": moduleName1,
- *             "caseNumber1": {
- *                 "caseName": caseName,
- *                 "Pass": value,
- *                 "Fail": value
- *             },
- *             "caseNumber2": {
- *                 "caseName": caseName,
- *                 "Pass": value,
- *                 "Fail": value
- *             }
- *         }
- *     }
- * }
- */
-        let pageData = new Map();
-        let graspTotal, graspPass, graspFail;
-        let actions = 0;
-        let actionCount = 0;
-        let countPasses = 0;
-        let countFailures = 0;
-
-        await MODULE_CHROME.driver.findElement(MODULE_CHROME.by.xpath("//ul[@id='mocha-stats']/li[@class='passes']//em"))
-        .getText().then(function(message) {
-            graspPass = message >> 0;
-        });
-
-        await MODULE_CHROME.driver.findElement(MODULE_CHROME.by.xpath("//ul[@id='mocha-stats']/li[@class='failures']//em"))
-        .getText().then(function(message) {
-            graspFail = message >> 0;
-        });
-
-        graspTotal = graspPass + graspFail;
-
-        await MODULE_CHROME.driver.findElements(MODULE_CHROME.by.xpath("//ul[@id='mocha-report']/li[@class='suite']"))
-        .then(function(titleElements) {
-            for (let y in titleElements) {
-                let titleNumber = (parseInt(y) + 1).toString();
-                pageData.set(titleNumber, new Map());
-
-                titleElements[y].findElement(MODULE_CHROME.by.xpath("./h1/a")).getAttribute("textContent")
-                .then(function(titleName) {
-                    pageData.get(titleNumber).set("titleName", titleName);
-
-                    titleElements[y].findElements(MODULE_CHROME.by.xpath("./ul/li[@class='suite']"))
-                    .then(function(moduleElements) {
-                        if (moduleElements.length === 0) {
-                            let moduleNumber = "0";
-                            pageData.get(titleNumber).set(moduleNumber, new Map());
-                            pageData.get(titleNumber).get(moduleNumber).set("moduleName", titleName);
-
-                            titleElements[y].findElements(MODULE_CHROME.by.xpath(
-                                "./ul/li[@class='test pass fast' or " +
-                                "@class='test pass slow' or " +
-                                "@class='test fail' or " +
-                                "@class='test pass pending' or " +
-                                "@class='test pass medium']"))
-                            .then(async function(caseElements) {
-                                for (let x in caseElements) {
-                                    let caseNumber = (parseInt(x) + 1).toString();
-                                    pageData.get(titleNumber).get(moduleNumber).set(caseNumber, new Map());
-
-                                    let caseName = await getCaseName(caseElements[x]);
-                                    pageData.get(titleNumber).get(moduleNumber).get(caseNumber).set("caseName", caseName);
-
-                                    let caseStatus = await getCaseStatus(caseElements[x]);
-                                    if (caseStatus == "Pass") {
-                                        countPasses = countPasses + 1;
-                                        pageData.get(titleNumber).get(moduleNumber).get(caseNumber).set("Pass", 1);
-                                        pageData.get(titleNumber).get(moduleNumber).get(caseNumber).set("Fail", null);
-                                    } else {
-                                        countFailures = countFailures + 1;
-                                        pageData.get(titleNumber).get(moduleNumber).get(caseNumber).set("Pass", null);
-                                        pageData.get(titleNumber).get(moduleNumber).get(caseNumber).set("Fail", 1);
-                                    }
-
-                                    actions = actions + 1;
-//                                    let showNumber = actions;
-//                                    console.log(LOGGER_HEARD() + showNumber + ": " + titleName + "---" + titleName + "---" + caseName);
-                                }
-                            });
-                        } else {
-                            for (let k in moduleElements) {
-                                let moduleNumber = (parseInt(k) + 1).toString();
-                                pageData.get(titleNumber).set(moduleNumber, new Map());
-
-                                moduleElements[k].findElement(MODULE_CHROME.by.xpath("./h1/a")).getAttribute("textContent")
-                                .then(function(moduleName) {
-                                    moduleName = moduleName.split("#")[1];
-                                    pageData.get(titleNumber).get(moduleNumber).set("moduleName", moduleName);
-
-                                    moduleElements[k].findElements(MODULE_CHROME.by.xpath(
-                                        "./ul/li[@class='test pass fast' or " +
-                                        "@class='test pass slow' or " +
-                                        "@class='test fail' or " +
-                                        "@class='test pass pending' or " +
-                                        "@class='test pass medium']"))
-                                    .then(async function(caseElements) {
-                                        for (let x in caseElements) {
-                                            let caseNumber = (parseInt(x) + 1).toString();
-                                            pageData.get(titleNumber).get(moduleNumber).set(caseNumber, new Map());
-
-                                            let caseName = await getCaseName(caseElements[x]);
-                                            pageData.get(titleNumber).get(moduleNumber).get(caseNumber).set("caseName", caseName);
-
-                                            let caseStatus = await getCaseStatus(caseElements[x]);
-                                            if (caseStatus == "Pass") {
-                                                countPasses = countPasses + 1;
-                                                pageData.get(titleNumber).get(moduleNumber).get(caseNumber).set("Pass", 1);
-                                                pageData.get(titleNumber).get(moduleNumber).get(caseNumber).set("Fail", null);
-                                            } else {
-                                                countFailures = countFailures + 1;
-                                                pageData.get(titleNumber).get(moduleNumber).get(caseNumber).set("Pass", null);
-                                                pageData.get(titleNumber).get(moduleNumber).get(caseNumber).set("Fail", 1);
-                                            }
-
-                                            actions = actions + 1;
-//                                            let showNumber = actions;
-//                                            console.log(LOGGER_HEARD() + showNumber + ": " + titleName + "---" + moduleName + "---" + caseName);
-                                        }
-                                    });
-                                });
-                            }
-                        }
-                    });
-                });
-            }
-        });
-
-        await MODULE_CHROME.check(function() {
-            if (actionCount != actions) {
-                actionCount = actions;
-                console.log("\033[1A\033[50D\033[K    grasping: " + actionCount + "/" + graspTotal);
-            }
-
-            return (actions == graspTotal);
-        }, 5000000).then(function() {
-            console.log(LOGGER_HEARD() + "grasp all test case: " + actionCount);
-        }).catch(function() {
-            console.log(LOGGER_HEARD() + "total: " + graspTotal + " grasp: " + actionCount);
-            throw new Error("failed to grasp all test result");
-        });
-
-        if (graspPass != countPasses) {
-            console.log(LOGGER_HEARD() + graspPass + " : " + countPasses);
-            throw new Error("It's wrong to passed result!");
-        }
-
-        if (graspFail != countFailures) {
-            console.log(LOGGER_HEARD() + graspFail + " : " + countFailures);
-            throw new Error("It's wrong to failed result!");
-        }
-
-        console.log("    Web passes: " + graspPass);
-        console.log("  Check passes: " + countPasses);
-        console.log("  Web failures: " + graspFail);
-        console.log("Check failures: " + countFailures);
-        console.log("         TOTAL: " + graspTotal);
-/*
-        for (let key1 of pageData.keys()) {
-            console.log(key1 + ":");
-            for (let key2 of pageData.get(key1).keys()) {
-                if (key2 == "titleName") {
-                    console.log("   " + key2 + ": " + pageData.get(key1).get(key2));
-                } else {
-                    console.log("   " + key2 + ":");
-                    for (let key3 of pageData.get(key1).get(key2).keys()) {
-                        if (key3 == "moduleName") {
-                            console.log("       " + key3 + ": " + pageData.get(key1).get(key2).get(key3));
-                        } else {
-                            console.log("       " + key3 + ":");
-                            for (let key4 of pageData.get(key1).get(key2).get(key3).keys()) {
-                                console.log("           " + key4 + ": " + pageData.get(key1).get(key2).get(key3).get(key4));
-                            }
-                        }
-                    }
-                }
-            }
-        }
-*/
-        let titleName, moduleName;
-        for (let titleNumber of pageData.keys()) {
-            for (let moduleNumber of pageData.get(titleNumber).keys()) {
-                if (moduleNumber == "titleName") {
-                    titleName = pageData.get(titleNumber).get(moduleNumber);
-                } else {
-                    for (let caseNumber of pageData.get(titleNumber).get(moduleNumber).keys()) {
-                        if (caseNumber == "moduleName") {
-                            moduleName = pageData.get(titleNumber).get(moduleNumber).get(caseNumber);
-                        } else {
-                            let DataFormat = {
-                                Feature: titleName,
-                                CaseId: moduleName + "/" + caseNumber,
-                                TestCase: pageData.get(titleNumber).get(moduleNumber).get(caseNumber).get("caseName"),
-                                Pass : pageData.get(titleNumber).get(moduleNumber).get(caseNumber).get("Pass"),
-                                Fail: pageData.get(titleNumber).get(moduleNumber).get(caseNumber).get("Fail"),
-                                NA: null,
-                                ExecutionType: "auto",
-                                SuiteName: "tests"
-                            };
-
-                            await MODULE_CSV.write(DataFormat);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     var testResult = async function(prefer) {
         console.log(LOGGER_HEARD() + "start grasping test result with '" + prefer + "'");
 
@@ -295,30 +22,6 @@ const os = require("os");
             return MODULE_CHROME.script("return window.mochaFinish;");
         }, 500000).then(async function() {
             console.log(LOGGER_HEARD() + "load remote URL is completed, no crash");
-
-            if (TEST_PLATFORM == "android") {
-                let URLPath, sourceHTMLPath;
-                if (os.type() == "Windows_NT") {
-                    sourceHTMLPath = ".\\output\\source-" + prefer + ".html";
-                    URLPath = "file://" + process.cwd() + "\\output\\source-" + prefer + ".html";
-                } else {
-                    sourceHTMLPath = "./output/source-" + prefer + ".html";
-                    URLPath = "file://" + process.cwd() + "/output/source-" + prefer + ".html";
-                }
-
-                await MODULE_CHROME.script("return document.documentElement.outerHTML").then(function(html) {
-                    console.log(LOGGER_HEARD() + "dowload source html to " + sourceHTMLPath);
-
-                    fs.createWriteStream(sourceHTMLPath, {flags: "w"}).write(html);
-                });
-
-                await MODULE_CHROME.close();
-                await MODULE_CHROME.wait(2000);
-
-                await MODULE_CHROME.setBrowserNewest(false);
-                await MODULE_CHROME.create(null);
-                await MODULE_CHROME.open(URLPath);
-            }
         }).catch(async function(err) {
             if (err.message.search("session deleted because of page crash") != -1) {
                 console.log(LOGGER_HEARD() + "remote URL is crashed");
@@ -331,7 +34,168 @@ const os = require("os");
         });
 
         console.log(LOGGER_HEARD() + "grasping test case....\n");
-        await grasp();
+
+        await MODULE_CHROME.script("return document.documentElement.outerHTML").then(async function(html) {
+            let graspTotal, graspPass, graspFail;
+            let actions = 0;
+            let countPasses = 0;
+            let countFailures = 0;
+            let countTotal = 0;
+
+            await MODULE_CHROME.driver.findElement(MODULE_CHROME.by.xpath("//ul[@id='mocha-stats']/li[@class='passes']//em"))
+            .getText().then(function(message) {
+                graspPass = message >> 0;
+            });
+
+            await MODULE_CHROME.driver.findElement(MODULE_CHROME.by.xpath("//ul[@id='mocha-stats']/li[@class='failures']//em"))
+            .getText().then(function(message) {
+                graspFail = message >> 0;
+            });
+
+            graspTotal = graspPass + graspFail;
+
+            let $ = cheerio.load(html);
+
+            function getSuiteName($, suiteElement) {
+                return $(suiteElement).children("h1").children("a").text();
+            }
+
+            function checkSuiteOrCase($, suiteElement) {
+                let checkPoint = "case";
+                $(suiteElement).children("ul").children().each(function(i, element) {
+                    if ($(element).attr("class") === "suite") checkPoint = "suite";
+                });
+
+                return checkPoint;
+            }
+
+            function getCaseStatus($, caseElement) {
+                let caseStatus = $(caseElement).attr("class");
+                let resultStatus = null;
+                if (caseStatus == "test pass pending") {
+                    resultStatus = "N/A";
+                } else if (caseStatus == "test pass fast" || caseStatus == "test pass slow" || caseStatus == "test pass medium") {
+                    resultStatus = "Pass";
+                } else if (caseStatus == "test fail") {
+                    resultStatus = "Fail";
+                } else {
+                    throw new Error("not support case status");
+                }
+
+                return resultStatus;
+            }
+
+            function getCaseName($, caseElement) {
+                let caseName = $(caseElement).children("h2").text();
+                let length = caseName.length - 1;
+                $(caseElement).children("h2").children().each(function(i, element) {
+                    length = length - $(element).text().length;
+                });
+                return caseName.slice(0, length).trim();
+            }
+
+            // title suite
+            $("#mocha-report").children(".suite").each(function(i, titleElement) {
+                let titleName = getSuiteName($, titleElement);
+
+                if (checkSuiteOrCase($, titleElement) == "case") {
+                    let moduleName = titleName;
+
+                    // test case
+                    $(titleElement).children("ul").children("li").each(function(j, caseElement) {
+                        let caseStatusPass, caseStatusFail;
+                        let caseStatus = getCaseStatus($, caseElement);
+                        let caseName = getCaseName($, caseElement);
+
+                        if (caseStatus == "Pass") {
+                            countPasses = countPasses + 1;
+                            caseStatusPass = 1;
+                            caseStatusFail = null;
+                        } else {
+                            countFailures = countFailures + 1;
+                            caseStatusPass = null;
+                            caseStatusFail = 1;
+                        }
+
+                        actions = actions + 1;
+                        console.log("\033[1A\033[50D\033[K    grasping: " + actions + "/" + graspTotal);
+
+                        let number = j + 1;
+                        let DataFormat = {
+                            Feature: titleName,
+                            CaseId: moduleName + "/" + number,
+                            TestCase: caseName,
+                            Pass : caseStatusPass,
+                            Fail: caseStatusFail,
+                            NA: null,
+                            ExecutionType: "auto",
+                            SuiteName: "tests"
+                        };
+
+                        MODULE_CSV.write(DataFormat);
+                    });
+                } else {
+                    // module suite
+                    $(titleElement).children("ul").children(".suite").each(function(j, moduleElement) {
+                        let moduleName = getSuiteName($, moduleElement).split("#")[1];
+
+                        if (checkSuiteOrCase($, moduleElement) == "case") {
+                            // test case
+                            $(moduleElement).children("ul").children("li").each(function(k, caseElement) {
+                                let caseStatusPass, caseStatusFail;
+                                let caseStatus = getCaseStatus($, caseElement);
+                                let caseName = getCaseName($, caseElement);
+
+                                if (caseStatus == "Pass") {
+                                    countPasses = countPasses + 1;
+                                    caseStatusPass = 1;
+                                    caseStatusFail = null;
+                                } else {
+                                    countFailures = countFailures + 1;
+                                    caseStatusPass = null;
+                                    caseStatusFail = 1;
+                                }
+
+                                actions = actions + 1;
+                                console.log("\033[1A\033[50D\033[K    grasping: " + actions + "/" + graspTotal);
+
+                                let number = k + 1;
+                                let DataFormat = {
+                                    Feature: titleName,
+                                    CaseId: moduleName + "/" + number,
+                                    TestCase: caseName,
+                                    Pass : caseStatusPass,
+                                    Fail: caseStatusFail,
+                                    NA: null,
+                                    ExecutionType: "auto",
+                                    SuiteName: "tests"
+                                };
+
+                                MODULE_CSV.write(DataFormat);
+                            });
+                        }
+                    });
+                }
+            });
+
+            if (graspPass != countPasses) {
+                console.log(LOGGER_HEARD() + graspPass + " : " + countPasses);
+                throw new Error("It's wrong to passed result!");
+            }
+
+            if (graspFail != countFailures) {
+                console.log(LOGGER_HEARD() + graspFail + " : " + countFailures);
+                throw new Error("It's wrong to failed result!");
+            }
+
+            countTotal = countPasses + countFailures;
+            console.log(LOGGER_HEARD() + "grasp all test case: " + countTotal);
+            console.log("    Web passes: " + graspPass);
+            console.log("  Check passes: " + countPasses);
+            console.log("  Web failures: " + graspFail);
+            console.log("Check failures: " + countFailures);
+            console.log("         TOTAL: " + graspTotal);
+        });
 
         console.log(LOGGER_HEARD() + "finish grasping test result with '" + prefer + "'");
         await MODULE_CSV.close();
