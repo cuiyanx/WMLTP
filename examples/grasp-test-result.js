@@ -16,11 +16,17 @@ const os = require("os");
         let remoteURL = MODULE_CHROME.getRemoteTestURL();
         await MODULE_CHROME.open(remoteURL);
 
-        console.log(LOGGER_HEARD() + "open URL: " + remoteURL);
+        await MODULE_CHROME.check(function() {
+            return MODULE_CHROME.until.elementLocated(MODULE_CHROME.by.xpath("//*[@id='mocha-stats']/li[1]/canvas"));
+        }, 200000).then(function() {
+            console.log(LOGGER_HEARD() + "open remote URL: " + remoteURL);
+        }).catch(function(err) {
+            throw new Error("failed to load web page");
+        });
 
-        await MODULE_CHROME.check(async function() {
+        await MODULE_CHROME.check(function() {
             return MODULE_CHROME.script("return window.mochaFinish;");
-        }, 500000).then(async function() {
+        }, 500000).then(function() {
             console.log(LOGGER_HEARD() + "load remote URL is completed, no crash");
         }).catch(async function(err) {
             if (err.message.search("session deleted because of page crash") != -1) {
