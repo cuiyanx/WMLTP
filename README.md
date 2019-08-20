@@ -38,7 +38,11 @@ $ npm run testresult
 
 * `nightlyBuildURL`: nightly chromium build path
 
-* `testCaseURL`: test case URL
+* `remoteURL`: general test case URL
+
+* `needCheckRealModelTC`: real model test case flag, support **true** and **false**.
+
+* `localServerURL`: real model test case URL
 
 * `platform`: test platforms(one or more)
 

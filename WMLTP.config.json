@@ -1,6 +1,8 @@
 {
     "nightlyBuildURL": "http://powerbuilder.sh.intel.com/public/webml/nightly/",
-    "testCaseURL": "https://brucedai.github.io/webnnt/test/index-local.html",
+    "remoteURL": "https://brucedai.github.io/webnnt/test/index-local.html",
+    "needCheckRealModelTC": true,
+    "localServerURL": "http://localhost:8080/test/squeezenet1.1.html",
     "platform": [
         "linux"
     ],

@@ -4,10 +4,10 @@ const fs = require("fs");
 const os = require("os");
 
 (async function() {
-    var testResult = async function(prefer) {
+    var testResult = async function(prefer, keyWord) {
         console.log(LOGGER_HEARD() + "start grasping test result with '" + prefer + "'");
 
-        let csvFilePath = await MODULE_CSV.open(prefer);
+        let csvFilePath = await MODULE_CSV.open(prefer, keyWord);
         console.log(LOGGER_HEARD() + "open csv file: '" + csvFilePath + "'");
 
         await MODULE_CHROME.setBrowserNewest(true);
@@ -210,6 +210,7 @@ const os = require("os");
 
     for (let platform of TARGET_PLATFORMS) {
         TEST_PLATFORM = platform;
+        let urlMap = GET_TEST_URLS();
         let preferArray = GET_PREFER_MODELS();
         console.log(LOGGER_HEARD() + "prefer: " + preferArray);
 
@@ -220,7 +221,11 @@ const os = require("os");
             continue;
         } else {
             for (let prefer of preferArray) {
-                await testResult(prefer);
+                for (let [key, value] of urlMap.entries()) {
+                    CURRENT_URL = value;
+
+                    await testResult(prefer, key);
+                }
             }
 
             await MODULE_TOOLS.uninstallChromium();
