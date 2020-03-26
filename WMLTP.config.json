@@ -12,9 +12,20 @@
         "windows": null
     },
     "webml": {
-        "IEMYRIAD": false,
-        "supportSwitch": false,
-        "prefer": "Linux-Polyfill-Sustained-WebGL"
+        "prefer": "Linux-Polyfill-Sustained-WebGL",
+        "switch": {
+            "linux": {
+                "IEMYRIAD": false,
+                "INFERENCE_ENGINE": false
+            },
+            "mac": {
+                "DNNL": false
+            },
+            "windows": {
+                "DML": false,
+                "INFERENCE_ENGINE": false
+            }
+        }
     },
     "designated": {
         "flag": false,

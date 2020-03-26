@@ -52,9 +52,8 @@ $ npm run testresult
     ```
 
 * `password`: supper user password for running platform
-* `webml.IEMYRIAD`: prefer `IE-MYRIAD` on **Linux**, support **true** and **false**.
-* `webml.supportSwitch`: Mac: `--use-mkldnn`, Linux: `--use-inference-engine`, Windows: `--use-dml`, support **true** and **false**.
 * `webml.prefer`: support `all` or single prefer, such as `Linux-WebNN-Fast-MKLDNN`.
+* `webml.switch`: Mac: `--use-dnnl`, Linux: `IE-MYRIAD` and `--use-inference-engine`, Windows: `--use-dml` and `--use-inference-engine`, support **true** and **false**.
 * `designated.flag`: flag of designated commit
 * `designated.commit`: if `designated.flag` as **true**, set designated commit
 * `serialnumber`: android devices serial number
