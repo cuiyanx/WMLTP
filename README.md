@@ -53,7 +53,7 @@ $ npm run testresult
 
 * `password`: supper user password for running platform
 * `webml.prefer`: support `all` or single prefer, such as `Linux-WebNN-Fast-MKLDNN`.
-* `webml.switch`: Mac: `--use-dnnl`, Linux: `IE-MYRIAD` and `--use-inference-engine`, Windows: `--use-dml` and `--use-inference-engine`, support **true** and **false**.
+* `webml.switch`: Mac: `--use-dnnl`, Linux: `--use-inference-engine`, Windows: `--use-dml` and `--use-inference-engine`, support **true** and **false**. If `INFERENCE_ENGINE` is **true**, `BACKEND_LIST` must be set, support **IE-MKLDNN**,  **IE-clDNN**, **IE-MYRIAD** and **IE-GNA**.
 * `designated.flag`: flag of designated commit
 * `designated.commit`: if `designated.flag` as **true**, set designated commit
 * `serialnumber`: android devices serial number

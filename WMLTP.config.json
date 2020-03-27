@@ -15,15 +15,16 @@
         "prefer": "Linux-Polyfill-Sustained-WebGL",
         "switch": {
             "linux": {
-                "IEMYRIAD": false,
-                "INFERENCE_ENGINE": false
+                "INFERENCE_ENGINE": true,
+                "BACKEND_LIST": ["IE-MKLDNN", "IE-clDNN", "IE-MYRIAD", "IE-GNA"]
             },
             "mac": {
                 "DNNL": false
             },
             "windows": {
                 "DML": false,
-                "INFERENCE_ENGINE": false
+                "INFERENCE_ENGINE": false,
+                "BACKEND_LIST": ["IE-MKLDNN", "IE-clDNN", "IE-MYRIAD", "IE-GNA"]
             }
         }
     },
